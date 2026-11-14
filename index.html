@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+    <script>
+        // 被嵌在 Google 協作平台框框裡才需要「滿版新分頁」；直接開網址（例如 GitHub）就隱藏
+        try { if (window.self !== window.top) document.documentElement.classList.add('is-embedded'); } catch (e) { document.documentElement.classList.add('is-embedded'); }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -466,6 +470,58 @@
         .tp-chip.on .tp-no { color: #e0f2fe; }
         .admin-task-pick { flex-basis: 100%; background: #fff; border: 1px solid #fed7aa; border-radius: 10px; padding: 8px 10px; }
         .admin-task-pick .atp-title { font-weight: 900; color: #9a3412; font-size: 14px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+        /* ================= 🏠 結束遊戲按鈕 ================= */
+        .end-game-btn { background: #e11d48; color: #fff; border-radius: 999px; padding: 8px 14px; font: inherit; font-size: 15px; font-weight: 900; white-space: nowrap; box-shadow: 0 3px 0 #9f1239; min-height: 42px; }
+        .end-game-btn.armed { background: #facc15; color: #7c2d12; box-shadow: 0 3px 0 #a16207; animation: endArmPulse .5s ease-in-out infinite alternate; }
+        @keyframes endArmPulse { from { transform: scale(1); } to { transform: scale(1.06); } }
+        html:not(.is-embedded) .fulltab-only { display: none !important; }
+
+        /* ================= 📐 放大 125%／150% 也能捲到完整畫面 ================= */
+        /* 置中排列在內容比畫面高時，最上面會被推出畫面外、捲不回來 → 一律從頂端開始排 */
+        #home-screen.screen.active, #settings-screen.screen.active, #result-screen.screen.active { justify-content: flex-start !important; overflow-y: auto !important; }
+        #home-screen > *, #settings-screen > *, #result-screen > * { flex-shrink: 0; }
+        #home-screen .home-card { margin-top: auto; margin-bottom: auto; }   /* 畫面夠高時仍然垂直置中 */
+        /* 觸控螢幕：遊戲畫面以外，手指按在按鈕或小卡上也能上下推動畫面 */
+        #home-screen *, #settings-screen *, #result-screen *, .overlay * { touch-action: manipulation; }
+        #home-screen input[type="range"], #settings-screen input[type="range"] { touch-action: pan-y; }
+        #home-screen, #settings-screen, #result-screen { touch-action: pan-y; }
+        /* 彈出視窗太高時可以捲動 */
+        .overlay { overflow-y: auto; justify-content: flex-start !important; padding: 12px 0; touch-action: pan-y; }
+        .overlay > * { margin-top: auto !important; margin-bottom: auto !important; flex-shrink: 0; }
+        .small-modal-card { max-height: none; }
+        .modal-card { max-height: calc(100% - 24px); }
+
+        /* ================= 🎮 v1.7 三種遊戲方式＋進階設定 ================= */
+        .player-mode-selector.three { grid-template-columns: repeat(3, 1fr); }
+        .player-mode-selector.three .p-mode-btn { padding: 10px 6px; font-size: 15px; }
+        .p-mode-btn .pm-icon { font-size: 24px; line-height: 1.1; }
+        .p-mode-btn.practice-mode.active { background: linear-gradient(135deg, #8b5cf6, #6d28d9); border-color: #5b21b6; color: #fff; box-shadow: 0 3px 8px rgba(139,92,246,0.35); }
+        .btn-start { font-weight: 900; letter-spacing: 2px; }
+        .quick-sliders-box { background: linear-gradient(135deg, #eef9ff 0%, #e0f2fe 100%); border: 2px solid #38bdf8; border-radius: 14px; padding: 8px 12px; margin-bottom: 8px; text-align: left; }
+        .quick-sliders-title { font-size: 13px; font-weight: 900; color: #0369a1; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; }
+        .sliders-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+        .slider-item { display: flex; flex-direction: column; gap: 4px; background: rgba(255,255,255,0.9); padding: 6px 10px; border-radius: 12px; border: none; transition: opacity .2s; }
+        .slider-item.full-row { grid-column: 1 / -1; }
+        .slider-item.dimmed { opacity: 0.4; pointer-events: none; }
+        .slider-label-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 13px; font-weight: 900; color: #1e293b; }
+        .slider-val-badge { background: #0284c7; color: #fff; padding: 1px 9px; border-radius: 10px; font-size: 12.5px; font-weight: 900; }
+        #home-screen input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: #cbd5e1; border-radius: 6px; outline: none; cursor: pointer; }
+        #home-screen input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 26px; height: 26px; border-radius: 50%; background: #0284c7; border: 3px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.3); cursor: pointer; }
+        details.quick-sliders-box { background: #f0f9ff; border: none; border-radius: 16px; padding: 0; margin: 4px 0 10px; }
+        details.quick-sliders-box > summary { list-style: none; cursor: pointer; padding: 10px 14px; margin: 0; display: flex; align-items: center; gap: 8px; }
+        details.quick-sliders-box > summary::-webkit-details-marker { display: none; }
+        .adv-label { font-size: 15px; font-weight: 900; color: #0369a1; white-space: nowrap; }
+        .summary-chips { flex: 1; font-size: 12px !important; color: #475569 !important; font-weight: 700; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .adv-arrow { color: #0369a1; transition: transform 0.2s; }
+        details[open] .adv-arrow { transform: rotate(180deg); }
+        .adv-toolbar { display: flex; align-items: center; gap: 8px; padding: 0 14px 8px; flex-wrap: wrap; }
+        details.quick-sliders-box .sliders-grid { padding: 0 14px 12px; }
+        .adv-note { margin: 0 14px 8px; font-size: 12px; color: #475569; background: #fff; border-radius: 10px; padding: 6px 10px; line-height: 1.5; }
+        .task-pick-inline.partial { box-shadow: inset 0 0 0 2px #f59e0b; background: #fffbeb; }
+        .task-pick-inline .task-picker { max-height: 190px; }
+        .finish-practice-btn { background: #16a34a; color: #fff; border-radius: 999px; padding: 8px 14px; font: inherit; font-size: 15px; font-weight: 900; white-space: nowrap; box-shadow: 0 3px 0 #166534; min-height: 42px; align-items: center; }
+        @media (max-width: 560px) { .player-mode-selector.three { grid-template-columns: 1fr; } .sliders-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body tabindex="0">
@@ -474,12 +530,12 @@
         <!-- ================= 1. 首頁 ================= -->
         <div id="home-screen" class="screen active">
             <div class="home-card">
-                <button class="fullscreen-top-btn" onclick="openInNewFullTab()" title="在新分頁滿版開啟">🚀 滿版新分頁</button>
+                <button class="fullscreen-top-btn fulltab-only" onclick="openInNewFullTab()" title="在新分頁滿版開啟">🚀 滿版新分頁</button>
                 <h1 style="font-size: clamp(22px, 4.5vw, 32px); margin: 2px 0 2px 0; color: #0097e6; text-shadow: 2px 2px 0 #dff9fb;">🎈 多人氣球拍拍大挑戰</h1>
                 <div id="home-subtitle" style="font-size: 13px; font-weight: 900; color: #27ae60; margin-bottom: 6px;">【75吋大屏電競計分板 × 自動翻牌防亂拍 × 教學診斷版】</div>
                 
                 <!-- 🚀 首頁直接顯示「在新分頁滿版開啟遊戲」建議區塊 -->
-                <div id="new-tab-recommend-banner">
+                <div id="new-tab-recommend-banner" class="fulltab-only">
                     <div style="font-size: 12px; font-weight: 900; color: #c0392b;">
                         📱 使用 iPad / 75吋大屏，或覺得Google協作平台邊緣被切掉嗎？
                     </div>
@@ -489,45 +545,24 @@
                 </div>
 
                 <!-- 🎮 先選模式，下方輸入框會根據「合作」或「PK」自動切換！ -->
-                <div style="text-align:left; font-size:12.5px; font-weight:900; color:#2c3e50; margin-bottom:4px;">🎯 第一步：選擇同屏人數與互動規則（氣球嚴格鎖定於各自防區不跨線）：</div>
-                <div class="player-mode-selector">
-                    <button id="pmode-1p" class="p-mode-btn" onclick="selectPlayMode('1p')">
-                        <span>👤 1人特訓挑戰</span>
-                        <span class="sub">個人全場刷榜 (集滿5題大絕招)</span>
+                <!-- 🎮 選擇遊戲方式（跟拖曳分類一樣） -->
+                <div class="player-mode-selector three">
+                    <button id="pmode-coop" class="p-mode-btn active" onclick="selectRuleType('coop')">
+                        <span class="pm-icon">🤝</span>
+                        <span>小隊合作接力</span>
+                        <span class="sub">同心拍正解，比拚全班排行</span>
                     </button>
-                    <button id="pmode-4p_coop" class="p-mode-btn active" onclick="selectPlayMode('4p_coop')">
-                        <span>🤝 4人小隊合作保衛戰</span>
-                        <span class="sub">4區同心共刷總分 (集滿10題大絕招)</span>
+                    <button id="pmode-practice" class="p-mode-btn practice-mode" onclick="selectRuleType('practice')">
+                        <span class="pm-icon">🎯</span>
+                        <span>1 人熟練練習</span>
+                        <span class="sub">不限時，每題拍熟再換題</span>
                     </button>
-                    <button id="pmode-2p" class="p-mode-btn pk-mode" onclick="selectPlayMode('2p')">
-                        <span>⚔️ 2人左右雙打 PK</span>
-                        <span class="sub">左紅vs右藍對決 (冠軍代表登榜)</span>
-                    </button>
-                    <button id="pmode-4p_vs" class="p-mode-btn pk-mode" onclick="selectPlayMode('4p_vs')">
-                        <span>🏆 4人四方陣地 PK 賽</span>
-                        <span class="sub">紅藍綠黃搶分爭霸 (冠軍代表登榜)</span>
+                    <button id="pmode-pk" class="p-mode-btn pk-mode" onclick="selectRuleType('pk')">
+                        <span class="pm-icon">⚔️</span>
+                        <span>台上 PK 爭霸</span>
+                        <span class="sub">各自搶分，冠軍登榜</span>
                     </button>
                 </div>
-
-                <!-- 🏁 v1.4 分組接力＋注音 -->
-                <div class="home-options-row">
-                    <div class="relay-picker" title="全班分組輪流上台：每組成績各自登榜，最後總排名">
-                        <span class="opt-label">🏁 分組接力</span>
-                        <button class="relay-step" onclick="changeRelay(-1)">－</button>
-                        <span id="relay-count-label" class="relay-val">不接力（1 場）</span>
-                        <button class="relay-step" onclick="changeRelay(1)">＋</button>
-                    </div>
-                    <button id="home-zhuyin-btn" class="zy-toggle" onclick="toggleZhuyinMode()">ㄅㄆㄇ 注音：關閉</button>
-                    <span id="zy-engine-status" class="zy-engine-status loading">注音引擎：載入中…</span>
-                </div>
-                <details id="task-pick-wrap" class="task-pick">
-                    <summary>📋 這次要出的題目：<b id="task-pick-label">全部</b><span class="tp-tip">（點這裡勾選）</span></summary>
-                    <div class="tp-tools">
-                        <button type="button" class="tp-btn" onclick="setAllHomeTaskPicks()">✅ 全選</button>
-                        <span class="tp-note">至少勾 1 題；沒勾的題目這場不會出現。只影響這一場，不會存回雲端。</span>
-                    </div>
-                    <div id="task-picker" class="task-picker"></div>
-                </details>
 
                 <!-- 📝 第二步：動態登錄表單 -->
                 <div class="login-form">
@@ -550,32 +585,73 @@
 
                     <!-- PK 對決模式：自動展開 2 人或 4 人選手名稱輸入欄 (預設已填好，可直接開玩) -->
                     <div id="pk-names-grid">
-                        <div class="pk-input-item" style="border-color:#ff5252;">
-                            <span style="color:#c0392b;">🔴 左1:</span>
+                        <div id="pk-item-0" class="pk-input-item" style="border-color:#ff5252;">
+                            <span style="color:#c0392b;">🔴 1:</span>
                             <input type="text" id="pk-name-0" value="紅隊選手" maxlength="8" placeholder="輸入姓名/座號">
                         </div>
-                        <div class="pk-input-item" style="border-color:#34ace0;">
-                            <span style="color:#2980b9;">🔵 左2:</span>
+                        <div id="pk-item-1" class="pk-input-item" style="border-color:#34ace0;">
+                            <span style="color:#2980b9;">🔵 2:</span>
                             <input type="text" id="pk-name-1" value="藍隊選手" maxlength="8" placeholder="輸入姓名/座號">
                         </div>
                         <div id="pk-item-2" class="pk-input-item" style="border-color:#33d9b2;">
-                            <span style="color:#16a085;">🟢 右3:</span>
+                            <span style="color:#16a085;">🟢 3:</span>
                             <input type="text" id="pk-name-2" value="綠隊選手" maxlength="8" placeholder="輸入姓名/座號">
                         </div>
                         <div id="pk-item-3" class="pk-input-item" style="border-color:#ffb142;">
-                            <span style="color:#d35400;">🟡 右4:</span>
+                            <span style="color:#d35400;">🟡 4:</span>
                             <input type="text" id="pk-name-3" value="黃隊選手" maxlength="8" placeholder="輸入姓名/座號">
                         </div>
                     </div>
                 </div>
 
                 <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 4px;">
-                    <button id="start-btn" class="btn-primary" onclick="startCloudGame()" style="width: 100%; font-size: 18px; margin: 2px 0;">▶️ 載入題庫並開始氣球挑戰</button>
+                    <button id="start-btn" class="btn-primary btn-start" onclick="startCloudGame()" style="width: 100%; font-size: 22px; margin: 2px 0; padding: 14px;">▶️ 開始挑戰</button>
+                </div>
+                <!-- ⚙️ 進階設定（預設收合，摘要一眼看清；跟拖曳分類一樣） -->
+                <details class="quick-sliders-box" id="advanced-settings">
+                    <summary class="quick-sliders-title">
+                        <span class="adv-label">⚙️ 進階設定</span>
+                        <span id="quick-summary-tag" class="summary-chips"></span>
+                        <span class="adv-arrow">▾</span>
+                    </summary>
+                    <div class="adv-toolbar">
+                        <button id="home-zhuyin-btn" class="zy-toggle" onclick="toggleZhuyinMode()">ㄅㄆㄇ 注音：關閉</button>
+                        <span id="zy-engine-status" class="zy-engine-status loading">注音引擎：載入中…</span>
+                    </div>
+                    <div class="adv-note">💡 打完挑戰代碼會自動帶入老師的預設值。這裡的調整只用在這次上課，<b>不會改到雲端題庫</b>；要永久修改請到「⚙️ 教師管理」。</div>
+                    <div class="sliders-grid">
+                        <div id="slider-wrap-players" class="slider-item">
+                            <div class="slider-label-row"><span>👥 同時上台人數</span><span id="lbl-quick-players" class="slider-val-badge">4 人</span></div>
+                            <input type="range" id="slider-players" min="1" max="4" step="1" value="4" oninput="onQuickSliderChange()">
+                        </div>
+                        <div id="slider-wrap-groups" class="slider-item">
+                            <div class="slider-label-row"><span>🏁 接力組數</span><span id="lbl-quick-groups" class="slider-val-badge">不接力</span></div>
+                            <input type="range" id="slider-groups" min="1" max="12" step="1" value="1" oninput="onQuickSliderChange()">
+                        </div>
+                        <div id="slider-wrap-time" class="slider-item">
+                            <div class="slider-label-row"><span>⏱️ 每組挑戰秒數</span><span id="lbl-quick-time" class="slider-val-badge">90 秒</span></div>
+                            <input type="range" id="slider-time" min="20" max="180" step="5" value="90" oninput="onQuickSliderChange()">
+                        </div>
+                        <div class="slider-item">
+                            <div class="slider-label-row"><span>🚀 氣球移動速度</span><span id="lbl-quick-speed" class="slider-val-badge">速度 4</span></div>
+                            <input type="range" id="slider-speed" min="1" max="10" step="1" value="4" oninput="onQuickSliderChange()">
+                        </div>
+                        <div id="task-pick-wrap" class="slider-item full-row task-pick-inline">
+                            <div class="slider-label-row">
+                                <span>📋 這次要出的題目（至少勾 1 題；沒勾的這場不出現）</span>
+                                <span><b id="task-pick-label" class="slider-val-badge" style="background:#0ea5e9;">全部</b>
+                                <button type="button" class="tp-btn" onclick="setAllHomeTaskPicks()">✅ 全選</button></span>
+                            </div>
+                            <div id="task-picker" class="task-picker"></div>
+                        </div>
+                    </div>
+                </details>
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 4px;">
                     <button class="btn-warning" onclick="openHomeLeaderboard()">🏆 查看代碼排行榜</button>
                     <button class="btn-secondary" onclick="openTeacherLoginModal()" style="background: #7f8c8d; box-shadow: 0 3px 0 #576574;">⚙️ 教師管理 / 雲端出題</button>
                 </div>
-                <div class="app-version" title="v1.6：自動開始開關可觸控、組別改叫第一組／第二組 ／ v1.5：首頁與後台可勾選這次要出的題目 ／ v1.4：分組接力（兩段式換組＋站位「我站好了」）、ㄅㄆㄇ 注音、明亮教室風、首頁「最近大家在玩」公開代碼、答案小卡編輯器（正解／陷阱兩欄）、代碼內存老師預設 ／ v1.2：開場 3-2-1 倒數、時間到橫幅、連擊大字與彩帶、柔和音效">🎈 多人氣球拍拍大挑戰 v1.6</div>
-                <div style="font-size: 11px; color: #555; font-weight: bold;">💡 氣球每數秒會自動翻牌換數字！誤拍陷阱將倒扣 3 格集氣並冷凍該區 3.5 秒！</div>
+                <div class="app-version" title="v1.7：三種遊戲方式、進階設定、結束遊戲按鈕、取消炸彈與雷神 ／ v1.6：自動開始開關可觸控、組別改叫第一組／第二組 ／ v1.5：首頁與後台可勾選這次要出的題目 ／ v1.4：分組接力（兩段式換組＋站位「我站好了」）、ㄅㄆㄇ 注音、明亮教室風、首頁「最近大家在玩」公開代碼、答案小卡編輯器（正解／陷阱兩欄）、代碼內存老師預設 ／ v1.2：開場 3-2-1 倒數、時間到橫幅、連擊大字與彩帶、柔和音效">🎈 多人氣球拍拍大挑戰 v1.7</div>
+                <div style="font-size: 11px; color: #555; font-weight: bold;">💡 氣球每數秒會自動翻牌換答案！拍錯陷阱會扣 10 分，並讓自己的防區冷凍 3.5 秒。</div>
             </div>
         </div>
 
@@ -788,7 +864,7 @@
                         <label>🏷️ 單元名稱: <input type="text" id="set-title" value="質數挑戰賽" style="width:140px;"></label>
                         <label>⏳ 時間(秒): <input type="number" id="set-time" value="90" style="width:65px;"></label>
                         <label>⚡ 飄移速度(1-10): <input type="number" id="set-speed" value="4" min="1" max="10" style="width:60px;"></label>
-                        <label>⚡ 初始大絕招: <input type="number" id="set-nitro" value="0" min="0" max="5" style="width:55px;"></label>
+                        <label title="雷神電磁脈衝已取消，這個欄位先保留">⚡ 初始大絕招: <input type="number" id="set-nitro" value="0" min="0" max="5" style="width:55px;"> <span style="font-size:11px; color:#94a3b8;">(目前暫無作用)</span></label>
                     </div>
                     <div class="filter-bar" style="background:#eef9ff; padding:10px; border-radius:10px; border:1px solid #bde0fe; margin-bottom:0;">
                         <label>🎈 單人基準氣球數 (多人時自動依防區每格配給2~3顆):
@@ -819,10 +895,19 @@
                         <label>🎮 遊戲模式:
                             <select id="set-default-mode">
                                 <option value="">不指定（依首頁選擇）</option>
-                                <option value="1p">👤 1人特訓</option>
-                                <option value="4p_coop">🤝 4人合作</option>
-                                <option value="2p">⚔️ 2人PK</option>
-                                <option value="4p_vs">🏆 4人PK</option>
+                                <option value="coop">🤝 小隊合作接力</option>
+                                <option value="practice">🎯 1人熟練練習</option>
+                                <option value="pk">⚔️ 台上PK爭霸</option>
+                            </select>
+                        </label>
+                        <label>👥 同時人數:
+                            <select id="set-player-count">
+                                <option value="1">1 人</option><option value="2">2 人</option><option value="3">3 人</option><option value="4" selected>4 人</option>
+                            </select>
+                        </label>
+                        <label title="1人熟練練習：每一題要拍中幾顆正解才換下一題">🎯 熟練練習每題拍中:
+                            <select id="set-practice-hits">
+                                <option value="3">3 顆</option><option value="4">4 顆</option><option value="5" selected>5 顆</option><option value="6">6 顆</option><option value="8">8 顆</option><option value="10">10 顆</option>
                             </select>
                         </label>
                         <label>🏁 分組接力:
@@ -900,9 +985,10 @@
                 </div>
                 <div id="task-display">任務準備中...</div>
                 <div class="hud-right">
-                    <div class="nitro-indicator" id="nitro-badge" title="集滿獲得全場電磁脈衝（拍錯倒扣3格）">⚡ <span id="nitro-count">0</span>/<span id="nitro-target-span">10</span></div>
+                    <div class="nitro-indicator" id="nitro-badge" style="display:none;">⚡ <span id="nitro-count">0</span>/<span id="nitro-target-span">10</span></div>
+                    <button id="finish-practice-btn" class="finish-practice-btn" style="display:none;" onclick="finishPracticeNow()">✅ 結束練習看成績</button>
                     <button id="voice-toggle-btn" class="icon-circle-btn" onclick="toggleVoiceInGame()" title="切換語音播報">🔊</button>
-                    <button class="icon-circle-btn" onclick="openInNewFullTab()" title="在新分頁滿版開啟">⛶</button>
+                    <button id="end-game-btn" class="end-game-btn" onclick="onEndGameBtn(this)" title="結束這一局，回到一開始的設定畫面（1 秒內再按一次確認）">🏠 結束遊戲，回主畫面</button>
                 </div>
             </div>
             <div id="canvas-container">
@@ -919,7 +1005,7 @@
             <div id="controls">
                 <div class="control-hint-box">
                     👆 <b>請看準正確氣球再拍！若面前是陷阱請等待氣球「🔄自動翻牌換數字」！</b><br>
-                    <span style="font-size:11.5px; color:#bdc3c7;">(全場維持 2~4 顆正解 ｜ 誤拍將倒扣 3 格集氣並冷凍該區 3.5 秒)</span>
+                    <span style="font-size:11.5px; color:#bdc3c7;">(每人防區至少 1 顆正解 ｜ 拍錯扣 10 分並冷凍該區 3.5 秒)</span>
                 </div>
                 <!-- 🤝 單人/合作模式：全場電磁脈衝大絕招按鈕 -->
                 <button id="missile-action-btn" class="disabled" oncontextmenu="return false;">
@@ -928,7 +1014,7 @@
                 </button>
                 <!-- ⚔️ PK 對決模式專用提示橫幅 -->
                 <div id="pk-mode-footer-banner">
-                    ⚔️ PK 爭霸規則：個人連擊滿 5 題自動觸發「專屬防區雷神清場」！冠軍將代表登榜！
+                    ⚔️ PK 爭霸：各自搶分，冠軍代表登榜！
                 </div>
                 <button id="pause-btn" onclick="togglePause()">⏸️</button>
             </div>
@@ -997,8 +1083,98 @@
             return DEFAULT_GAS_URL;
         }
 
-        function isPkMode() {
-            return selectedPlayMode === '2p' || selectedPlayMode === '4p_vs';
+        // 🎮 v1.7 三種遊戲方式（跟拖曳分類一樣）＋同時上台人數
+        let ruleType = 'coop';          // 'coop' 小隊合作接力 ／ 'practice' 1人熟練練習 ／ 'pk' 台上PK爭霸
+        let homePlayers = 4;            // 同時上台人數 1~4（PK 至少 2）
+        let quickDurationSec = 90, quickSpeed = 4;
+        function isPkMode() { return ruleType === 'pk'; }
+        function isPracticeMode() { return ruleType === 'practice'; }
+        function getTeamCount() {
+            if (isPracticeMode()) return 1;
+            if (isPkMode()) return Math.max(2, Math.min(4, homePlayers));
+            return Math.max(1, Math.min(4, homePlayers));
+        }
+        // 舊代碼的四種模式 → 新的模式＋人數
+        const LEGACY_MODE_MAP = { '1p': ['coop', 1], '4p_coop': ['coop', 4], '2p': ['pk', 2], '4p_vs': ['pk', 4] };
+        function modeFromCfg(cfg) {
+            if (!cfg) return null;
+            if (LEGACY_MODE_MAP[cfg.defaultMode]) return LEGACY_MODE_MAP[cfg.defaultMode];
+            if (['coop', 'practice', 'pk'].includes(cfg.defaultMode)) {
+                const n = parseInt(cfg.playerCount) || (cfg.defaultMode === 'pk' ? 2 : (cfg.defaultMode === 'practice' ? 1 : 4));
+                return [cfg.defaultMode, Math.max(1, Math.min(4, n))];
+            }
+            return null;
+        }
+        function syncLegacyPlayMode() {   // 給舊程式碼參考用
+            const n = getTeamCount();
+            selectedPlayMode = isPracticeMode() || n === 1 ? '1p' : (isPkMode() ? (n === 2 ? '2p' : '4p_vs') : '4p_coop');
+        }
+        function modeLabelOf(rt, n) {
+            if (rt === 'practice') return '🎯 1人熟練練習';
+            if (rt === 'pk') return `⚔️ ${n}人PK爭霸`;
+            return n === 1 ? '🤝 1人挑戰' : `🤝 ${n}人合作`;
+        }
+        function selectRuleType(type) {
+            ruleType = (type === 'pk' || type === 'practice') ? type : 'coop';
+            ['coop', 'practice', 'pk'].forEach(m => { const b = document.getElementById('pmode-' + m); if (b) b.classList.toggle('active', m === ruleType); });
+            const sp = document.getElementById('slider-players');
+            if (sp) { sp.min = ruleType === 'pk' ? 2 : 1; if (ruleType === 'pk' && +sp.value < 2) sp.value = 2; }
+            onQuickSliderChange();
+        }
+        function setHomeSlider(id, v) { const el = document.getElementById(id); if (el) el.value = v; }
+        function onQuickSliderChange() {
+            const g = id => document.getElementById(id);
+            if (!g('slider-players')) return;
+            homePlayers = parseInt(g('slider-players').value) || 4;
+            relayTotal = Math.max(1, Math.min(12, parseInt(g('slider-groups').value) || 1));
+            quickDurationSec = parseInt(g('slider-time').value) || 90;
+            quickSpeed = parseInt(g('slider-speed').value) || 4;
+            const practice = isPracticeMode();
+            g('lbl-quick-players').innerText = practice ? '1 人（熟練）' : `${getTeamCount()} 人`;
+            g('lbl-quick-groups').innerText = practice ? '不接力' : (relayTotal > 1 ? `${relayTotal} 組接力` : '不接力');
+            g('lbl-quick-time').innerText = practice ? '♾️ 不限時' : `${quickDurationSec} 秒`;
+            g('lbl-quick-speed').innerText = `速度 ${quickSpeed}`;
+            ['slider-wrap-players', 'slider-wrap-groups', 'slider-wrap-time'].forEach(id => { const el = g(id); if (el) el.classList.toggle('dimmed', practice); });
+            const tasks = typeof homeTaskList === 'function' ? homeTaskList() : null;
+            const pickTxt = tasks && tasks.length ? taskPicksLabel(normalizeTaskPicks(quickTaskPicks, tasks.length), tasks.length) : '全部題目';
+            const zyTxt = enableZhuyin ? '注音開' : '注音關';
+            g('quick-summary-tag').innerText = practice
+                ? `🎯 1人熟練 · 速度${quickSpeed} · 📋${pickTxt} · ${zyTxt}`
+                : `👥${getTeamCount()}人 × 🏁${relayTotal > 1 ? relayTotal + '組' : '不接力'} · ⏱️${quickDurationSec}秒 · 速度${quickSpeed} · 📋${pickTxt} · ${zyTxt}`;
+            syncLegacyPlayMode();
+            updateHomeNameFields();
+        }
+        function updateHomeNameFields() {
+            const singleGroup = document.getElementById('single-name-group');
+            const pkGrid = document.getElementById('pk-names-grid');
+            const nameLabel = document.getElementById('name-label');
+            const nameInput = document.getElementById('login-name');
+            const seatLabel = document.getElementById('seat-label');
+            if (!singleGroup || !pkGrid) return;
+            const n = getTeamCount();
+            if (isPkMode()) {
+                singleGroup.style.display = 'none';
+                pkGrid.style.display = 'grid';
+                seatLabel.innerHTML = `🔢 班級或座號 <span style="font-weight:normal; color:#7f8c8d;">(選填)</span>`;
+                for (let i = 0; i < 4; i++) { const el = document.getElementById('pk-item-' + i); if (el) el.style.display = i < n ? 'flex' : 'none'; }
+                return;
+            }
+            singleGroup.style.display = 'flex';
+            pkGrid.style.display = 'none';
+            seatLabel.innerHTML = `🔢 班級或座號 <span style="font-weight:normal; color:#7f8c8d;">(選填)</span>`;
+            if (isPracticeMode()) {
+                nameLabel.innerHTML = `👤 練習學生姓名或暱稱 <span style="color:#e74c3c;">*必填</span> <span style="color:#8e44ad;">(不限時，全部題目拍熟後記錄花費秒數)</span>`;
+                nameInput.placeholder = '請輸入姓名或暱稱';
+            } else if (isRelayMode()) {
+                nameLabel.innerHTML = `🤝 隊伍名稱前綴 <span style="color:#7f8c8d;">（可不填，接力會自動叫「第一組、第二組…」）</span>`;
+                nameInput.placeholder = '可不填（例如：五年一班）';
+            } else if (n === 1) {
+                nameLabel.innerHTML = `👤 小朋友姓名或暱稱 <span style="color:#e74c3c;">*必填</span>`;
+                nameInput.placeholder = '請輸入姓名或暱稱';
+            } else {
+                nameLabel.innerHTML = `🤝 ${n}人合作小隊名稱（全隊總分登榜） <span style="color:#e74c3c;">*必填</span>`;
+                nameInput.placeholder = '例如：無敵閃電隊';
+            }
         }
 
         function getNitroThreshold() {
@@ -1006,44 +1182,9 @@
         }
 
         function selectPlayMode(mode) {
-            selectedPlayMode = mode;
-            ['1p', '4p_coop', '2p', '4p_vs'].forEach(m => {
-                const btn = document.getElementById('pmode-' + m);
-                if (btn) btn.classList.toggle('active', m === mode);
-            });
-
-            const singleGroup = document.getElementById('single-name-group');
-            const pkGrid = document.getElementById('pk-names-grid');
-            const nameLabel = document.getElementById('name-label');
-            const nameInput = document.getElementById('login-name');
-            const seatLabel = document.getElementById('seat-label');
-
-            if (mode === '1p') {
-                singleGroup.style.display = 'flex';
-                pkGrid.style.display = 'none';
-                seatLabel.innerHTML = `🔢 座號 <span style="font-weight:normal; color:#7f8c8d;">(選填)</span>`;
-                nameLabel.innerHTML = `👤 個人姓名或暱稱 <span style="color:#e74c3c;">*必填</span>`;
-                nameInput.placeholder = "請輸入您的姓名或帥氣暱稱";
-            } else if (mode === '4p_coop') {
-                singleGroup.style.display = 'flex';
-                pkGrid.style.display = 'none';
-                seatLabel.innerHTML = `🔢 組別編號 <span style="font-weight:normal; color:#7f8c8d;">(選填，如:第一組)</span>`;
-                nameLabel.innerHTML = `🤝 4人合作小隊名稱 (全隊總分合算登榜) <span style="color:#e74c3c;">*必填</span>`;
-                nameInput.placeholder = "例如：第一組、無敵閃電隊";
-            } else if (mode === '2p') {
-                singleGroup.style.display = 'none';
-                pkGrid.style.display = 'grid';
-                seatLabel.innerHTML = `🔢 對決桌次/組別 <span style="font-weight:normal; color:#7f8c8d;">(選填)</span>`;
-                document.getElementById('pk-item-2').style.display = 'none';
-                document.getElementById('pk-item-3').style.display = 'none';
-            } else if (mode === '4p_vs') {
-                singleGroup.style.display = 'none';
-                pkGrid.style.display = 'grid';
-                seatLabel.innerHTML = `🔢 對決桌次/組別 <span style="font-weight:normal; color:#7f8c8d;">(選填)</span>`;
-                document.getElementById('pk-item-2').style.display = 'flex';
-                document.getElementById('pk-item-3').style.display = 'flex';
-            }
-            try { updateNameFieldForRelay(); } catch (e) {}
+            const m = LEGACY_MODE_MAP[mode]; if (!m) return;
+            homePlayers = m[1]; setHomeSlider('slider-players', m[1]);
+            selectRuleType(m[0]);
         }
 
         async function testGasConnection() {
@@ -1149,6 +1290,7 @@
                     document.getElementById('pk-name-3').value.trim()
                 ],
                 playMode: selectedPlayMode,
+                ruleType: ruleType, homePlayers: homePlayers, quickDurationSec: quickDurationSec, quickSpeed: quickSpeed,
                 relayTotal: relayTotal,
                 quickTaskPicks: quickTaskPicks, quickTaskPicksCode: quickTaskPicksCode,
                 enableZhuyin: enableZhuyin,
@@ -1219,12 +1361,16 @@
                         if (n && document.getElementById('pk-name-' + idx)) document.getElementById('pk-name-' + idx).value = n;
                     });
                 }
-                if (window.__TRANSFERRED_STATE__.playMode) selectPlayMode(window.__TRANSFERRED_STATE__.playMode);
-                if (window.__TRANSFERRED_STATE__.relayTotal) relayTotal = Math.max(1, Math.min(12, parseInt(window.__TRANSFERRED_STATE__.relayTotal) || 1));
+                const TS = window.__TRANSFERRED_STATE__;
+                if (TS.ruleType) {
+                    setHomeSlider('slider-players', TS.homePlayers || 4); setHomeSlider('slider-time', TS.quickDurationSec || 90); setHomeSlider('slider-speed', TS.quickSpeed || 4);
+                    setHomeSlider('slider-groups', TS.relayTotal || 1); selectRuleType(TS.ruleType);
+                } else if (TS.playMode) selectPlayMode(TS.playMode);
+                if (window.__TRANSFERRED_STATE__.relayTotal) { relayTotal = Math.max(1, Math.min(12, parseInt(window.__TRANSFERRED_STATE__.relayTotal) || 1)); setHomeSlider('slider-groups', relayTotal); }
                 if (Array.isArray(window.__TRANSFERRED_STATE__.quickTaskPicks)) { quickTaskPicks = window.__TRANSFERRED_STATE__.quickTaskPicks; quickTaskPicksCode = window.__TRANSFERRED_STATE__.quickTaskPicksCode || ''; }
                 if (typeof window.__TRANSFERRED_STATE__.enableZhuyin === 'boolean') enableZhuyin = window.__TRANSFERRED_STATE__.enableZhuyin;
             } else {
-                selectPlayMode('4p_coop');
+                selectRuleType('coop');
             }
 
             const inIframe = (window.self !== window.top);
@@ -1311,16 +1457,30 @@
 
         function startOfflineFallback00000() {
             document.getElementById('conn-error-modal').style.display = 'none';
+            enterFullscreenNow();
             params = getDefaultParams();
+            applyHomeOverridesToParams();
             if (!currentStudent || !currentStudent.roomCode) currentStudent = { roomCode: "00000", seatNo: "-", playerName: "熱血獵人" };
             preloadAllTaskImages();
-            quickPlayerCount = selectedPlayMode === '1p' ? 1 : (selectedPlayMode === '2p' ? 2 : 4);
+            quickPlayerCount = getTeamCount();
             beginRelaySession();
             showScreen('game-screen');
             startGameFlow();
         }
 
+        function enterFullscreenNow() {
+            try {
+                const el = document.documentElement;
+                const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+                if (req && !document.fullscreenElement && !document.webkitFullscreenElement) { const p = req.call(el); if (p && p.catch) p.catch(() => {}); }
+            } catch (e) {}
+        }
+        function applyHomeOverridesToParams() {   // 首頁進階設定只影響這一場
+            params.time = quickDurationSec;
+            params.speed = quickSpeed;
+        }
         async function startCloudGame() {
+            enterFullscreenNow();
             const rawCode = document.getElementById('login-code').value.trim();
             const codeInput = (rawCode || "00000").padStart(5, '0');
             document.getElementById('login-code').value = codeInput;
@@ -1329,7 +1489,7 @@
                 const sb = document.getElementById('start-btn');
                 sb.classList.add('disabled'); sb.innerText = '☁️ 正在載入挑戰題庫...';
                 await loadHomeRoomConfig(codeInput, { apply: !(homeRoomCache && homeRoomCache.code === codeInput) });
-                sb.classList.remove('disabled'); sb.innerText = '▶️ 載入題庫並開始氣球挑戰';
+                sb.classList.remove('disabled'); sb.innerText = '▶️ 開始挑戰';
                 if (homeRoomCache && homeRoomCache.code === codeInput) return startCloudGame();
                 // 載入失敗：交給下面原本的流程（代碼錯誤攔截／連線異常視窗）
             }
@@ -1343,7 +1503,7 @@
             } else {
                 nameInput = document.getElementById('login-name').value.trim();
                 if (!nameInput && !isRelayMode()) {
-                    showToast(selectedPlayMode === '4p_coop' ? '⚠️ 請先輸入「小隊名稱」喔！' : '⚠️ 請先輸入您的「姓名或暱稱」喔！');
+                    showToast(getTeamCount() > 1 ? '⚠️ 請先輸入「小隊名稱」喔！' : '⚠️ 請先輸入您的「姓名或暱稱」喔！');
                     document.getElementById('login-name').focus();
                     return;
                 }
@@ -1393,7 +1553,7 @@
                     return;
                 } finally {
                     startBtn.classList.remove('disabled');
-                    startBtn.innerText = '▶️ 載入題庫並開始氣球挑戰';
+                    startBtn.innerText = '▶️ 開始挑戰';
                 }
             } else {
                 if (codeInput !== "00000") {
@@ -1410,8 +1570,9 @@
                 if (picks.length < params.tasks.length) params.tasks = picks.map(i => params.tasks[i]);
             }
             rememberRecentCode(codeInput);
+            applyHomeOverridesToParams();
             preloadAllTaskImages();
-            quickPlayerCount = selectedPlayMode === '1p' ? 1 : (selectedPlayMode === '2p' ? 2 : 4);
+            quickPlayerCount = getTeamCount();
             beginRelaySession();
             showScreen('game-screen');
             startGameFlow();
@@ -1453,7 +1614,7 @@
 
             statusEl.innerText = "☁️ 成績上傳中...";
             const cleanRank = hammerTiers[currentHammerIdx].title;
-            const modeTag = selectedPlayMode === '4p_coop' ? '[4人合作]' : (isPkMode() ? '[PK冠軍]' : '');
+            const modeTag = isPracticeMode() ? '[自我熟練]' : (isPkMode() ? '[PK冠軍]' : (getTeamCount() > 1 ? `[${getTeamCount()}人合作]` : ''));
             const topicStr = (params.title || "質數挑戰賽") + modeTag;
             const wrongStr = wrongLogList.length ? wrongLogList.join(', ') : "全對無失誤";
             const tunneledRankTitle = `${cleanRank}||${topicStr}||${wrongStr}`;
@@ -1788,7 +1949,10 @@
             document.getElementById('set-collision-mode').value = params.collisionMode || "lanes";
             document.getElementById('set-pause').checked = !!params.allowPause;
             document.getElementById('set-voice').checked = params.enableVoice !== false;
-            document.getElementById('set-default-mode').value = ['1p', '4p_coop', '2p', '4p_vs'].includes(params.defaultMode) ? params.defaultMode : '';
+            { const mm = modeFromCfg(params);
+              document.getElementById('set-default-mode').value = mm ? mm[0] : '';
+              document.getElementById('set-player-count').value = String(mm ? mm[1] : 4);
+              document.getElementById('set-practice-hits').value = String([3, 4, 5, 6, 8, 10].includes(parseInt(params.practiceHits)) ? parseInt(params.practiceHits) : 5); }
             document.getElementById('set-relay-groups').value = String(Math.max(1, Math.min(12, parseInt(params.relayGroups) || 1)));
             document.getElementById('set-zhuyin').checked = params.enableZhuyin === true;
             document.getElementById('set-list-home').checked = params.listOnHome === true;   // 預設不公開
@@ -2050,6 +2214,9 @@
             params.allowPause = document.getElementById('set-pause').checked;
             params.enableVoice = document.getElementById('set-voice').checked;
             params.defaultMode = document.getElementById('set-default-mode').value || '';
+            params.playerCount = parseInt(document.getElementById('set-player-count').value) || 4;
+            if (params.defaultMode === 'pk') params.playerCount = Math.max(2, params.playerCount);
+            params.practiceHits = parseInt(document.getElementById('set-practice-hits').value) || 5;
             params.relayGroups = parseInt(document.getElementById('set-relay-groups').value) || 1;
             params.enableZhuyin = document.getElementById('set-zhuyin').checked;
             params.listOnHome = document.getElementById('set-list-home').checked;
@@ -2093,8 +2260,9 @@
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
         // 🖥️ v1.1 高解析度畫布（4K 大電視/Retina 文字銳利）：VW/VH 是 CSS 邏輯尺寸，實際像素 = 邏輯尺寸 × DPR
-        const APP_VERSION = 'v1.6';
+        const APP_VERSION = 'v1.7';
         const APP_CHANGELOG = [
+            ['v1.7', '照拖曳分類：三種遊戲方式、進階設定下拉、開始挑戰自動全螢幕、結束遊戲按鈕、放大畫面可捲動；取消炸彈與雷神、遊戲中不念組別語音、多人每人 3 顆氣球'],
             ['v1.6', '換組畫面「全員站好就自動開始」改成大按鈕（觸控可點）；組別叫「第一組、第二組…」'],
             ['v1.5', '首頁與後台可勾選這次要出的題目（沒勾的題目不出現）'],
             ['v1.4', '分組接力（兩段式換組＋站位「我站好了」）、ㄅㄆㄇ 注音、明亮教室風、首頁「最近大家在玩」公開代碼、答案小卡編輯器（正解／陷阱兩欄）、代碼內存老師預設'],
@@ -2768,7 +2936,7 @@
         let quickTotalGroups = 1;          // 給換組畫面用：接力總組數
         let lastSessionStartArgs = null;
 
-        function isRelayMode() { return relayTotal > 1; }
+        function isRelayMode() { return relayTotal > 1 && ruleType !== 'practice'; }
         // 🔢 組別用國字：第一組、第二組…第十二組
         function zhNum(n) {
             n = parseInt(n) || 0;
@@ -2780,7 +2948,7 @@
         }
         function relayGroupDisplayName(idx) {
             const prefix = (currentStudent && currentStudent.playerName && currentStudent.playerName !== '熱血獵人') ? currentStudent.playerName : '';
-            if (selectedPlayMode === '1p') return `第${zhNum(idx)}棒${prefix ? '-' + prefix : ''}`;
+            if (getTeamCount() === 1) return `第${zhNum(idx)}棒${prefix ? '-' + prefix : ''}`;
             return `第${zhNum(idx)}組${prefix ? '-' + prefix : ''}`;
         }
         function getTierTitleByScore(sc) {
@@ -2805,32 +2973,21 @@
         }
 
         function updateRelayUI() {
-            const lbl = document.getElementById('relay-count-label');
-            if (lbl) lbl.textContent = relayTotal > 1 ? `${relayTotal} 組接力` : '不接力（1 場）';
-            updateNameFieldForRelay();
+            setHomeSlider('slider-groups', relayTotal);
+            onQuickSliderChange();
         }
         function changeRelay(delta) {
             relayTotal = Math.max(1, Math.min(12, relayTotal + delta));
             updateRelayUI();
         }
-        function updateNameFieldForRelay() {
-            const nameLabel = document.getElementById('name-label');
-            const nameInput = document.getElementById('login-name');
-            if (!nameLabel || !nameInput || isPkMode()) return;
-            if (relayTotal > 1) {
-                nameLabel.innerHTML = selectedPlayMode === '1p'
-                    ? `🏁 接力名稱前綴（自動編號：第1棒、第2棒…）<span style="font-weight:normal; color:#7f8c8d;">(選填)</span>`
-                    : `🏁 小隊名稱前綴（自動編號：第1組、第2組…）<span style="font-weight:normal; color:#7f8c8d;">(選填)</span>`;
-                nameInput.placeholder = '例如：五年甲班（可留白）';
-            }
-        }
+        function updateNameFieldForRelay() { updateHomeNameFields(); }
 
         // 每組結束時：背景上傳本組成績（與原本 submitScore 格式完全相同）
         async function uploadGroupInBackground(rec) {
             const gasUrl = getGasUrl();
             if (!gasUrl) return;
             const cleanRank = getTierTitleByScore(rec.score);
-            const modeTag = selectedPlayMode === '4p_coop' ? '[4人合作]' : (isPkMode() ? '[PK冠軍]' : '');
+            const modeTag = isPracticeMode() ? '[自我熟練]' : (isPkMode() ? '[PK冠軍]' : (getTeamCount() > 1 ? `[${getTeamCount()}人合作]` : ''));
             const topicStr = (params.title || "多人氣球拍拍大挑戰") + modeTag + '[接力]';
             const wrongStr = rec.wrongList.length ? rec.wrongList.join(', ') : "全對無失誤";
             const payload = {
@@ -3227,18 +3384,22 @@
                 playSound('powerup');
                 spawnExplosion(VW / 2, VH * 0.55, ['#f1c40f', '#00ffcc', '#ff9ff3', '#ffffff'], 40);
                 floatingTexts.push({ x: VW / 2, y: VH * 0.48, text: '🆙 段位進化！' + hammerTiers[currentHammerIdx].title, color: '#00ffcc', life: 75, maxLife: 75 });
-                speakText("太棒了！段位進化成" + hammerTiers[currentHammerIdx].title.substring(2), false);
+                // 🔇 v1.7 不念語音
             } else {
                 currentHammerIdx = newIdx;
             }
             document.getElementById('rank-display').innerText = hammerTiers[currentHammerIdx].title;
         }
 
-        function getBalloonsPerTeam() {
-            if (selectedPlayMode === '1p') return Math.max(4, Math.min(8, Number(params.balloonCount) || 6));
-            if (selectedPlayMode === '2p') return 3;
-            return 2;
+        let gamePerTeam = 0;   // 開局時決定，整場固定
+        const MIN_SLOT_W = 105; // 每顆氣球至少要這麼寬，標籤才看得清楚；不夠就降成 2 顆
+        function computeBalloonsPerTeam() {
+            const n = activeTeams.length || getTeamCount();
+            if (n <= 1) return Math.max(4, Math.min(8, Number(params.balloonCount) || 6));
+            const zoneW = (VW || 1200) / n;
+            return zoneW / 3 >= MIN_SLOT_W ? 3 : 2;
         }
+        function getBalloonsPerTeam() { return gamePerTeam || computeBalloonsPerTeam(); }
 
         function getTouchZoneMetrics() {
             const topY = Math.max(115, Math.floor(VH * 0.34));
@@ -3256,7 +3417,7 @@
         }
 
         function setupActiveTeams() {
-            const count = selectedPlayMode === '1p' ? 1 : (selectedPlayMode === '2p' ? 2 : 4);
+            const count = getTeamCount();
             activeTeams = [];
             for (let i = 0; i < count; i++) {
                 const tpl = TEAM_TEMPLATES[i];
@@ -3315,14 +3476,11 @@
             const code = e.code || '';
             const key = (e.key || '');
 
-            if ((code === 'Space' || key === ' ') && !isPkMode()) {
+            // ⌨️ 鍵盤 1~9、0、-、= 對應氣球編號 1~12（4 人 × 3 顆）
+            const KEY_SLOTS = { '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '0': 10, '-': 11, '=': 12 };
+            if (KEY_SLOTS[key]) {
                 e.preventDefault();
-                activateDash();
-                return;
-            }
-            if (key >= '1' && key <= '8') {
-                e.preventDefault();
-                const targetSlotNum = parseInt(key);
+                const targetSlotNum = KEY_SLOTS[key];
                 const targetB = balloons.find(b => b.state === 'floating' && b.slotNumber === targetSlotNum);
                 if (targetB) {
                     popBalloon(targetB, targetB.x, targetB.y);
@@ -3340,16 +3498,12 @@
             const pkBanner = document.getElementById('pk-mode-footer-banner');
             const nitroBadge = document.getElementById('nitro-badge');
 
-            if (isPkMode()) {
-                missileBtn.style.display = 'none';
-                pkBanner.style.display = 'block';
-                nitroBadge.style.display = 'none';
-            } else {
-                missileBtn.style.display = 'flex';
-                pkBanner.style.display = 'none';
-                nitroBadge.style.display = 'flex';
-                document.getElementById('nitro-target-span').innerText = String(getNitroThreshold());
-            }
+            // ⚡ v1.7 不再有雷神大絕招與 PK 清場
+            missileBtn.style.display = 'none';
+            pkBanner.style.display = 'none';
+            nitroBadge.style.display = 'none';
+            const fpb = document.getElementById('finish-practice-btn');
+            if (fpb) fpb.style.display = isPracticeMode() ? 'inline-flex' : 'none';
 
             initGame();
             refocusGame();
@@ -3358,6 +3512,7 @@
         // ⚡ 單人/合作模式發動「雷神電磁脈衝」全場淨化大絕招（平衡調整：只針對場上正解加分，不額外疊加個人Combo與陷阱分）
         function activateDash() {
             refocusGame();
+            return;   // ⚡ v1.7 雷神電磁脈衝已取消（後台「初始大絕招」欄位暫時保留）
             if (isPkMode() || isIntroRunning() || endBanner) return;
             const allFrozen = activeTeams.length > 0 && activeTeams.every(t => t.freezeTimer > 0);
             if (nitroCount > 0 && dashCooldownTimer <= 0 && !allFrozen) {
@@ -3462,6 +3617,9 @@
             clearInterval(timerId); cancelAnimationFrame(animId);
             resizeCanvas();
             setupActiveTeams();
+            gamePerTeam = 0; gamePerTeam = computeBalloonsPerTeam();
+            practiceHitsPerTask = Math.max(1, parseInt(params.practiceHits) || 5);
+            practiceDoneTasks = 0; completedAllPractice = false;
             isPaused = false; timeLeft = params.time; timeUsed = 0; score = 0; correctCount = 0; wrongCount = 0;
             scorePopAnimTimer = 0;
             combo = 0; maxCombo = 0; currentHammerIdx = 0;
@@ -3491,13 +3649,16 @@
 
             lastFrameTs = 0; physAccMs = 0;
             timerId = setInterval(() => {
-                if (!isPaused && !isIntroRunning() && !endBanner) {
+                if (!isPaused && !isIntroRunning() && !endBanner && isPracticeMode()) {
+                    timeUsed++;   // 🎯 熟練練習不倒數，只記花了幾秒
+                    updateHUD();
+                } else if (!isPaused && !isIntroRunning() && !endBanner) {
                     timeLeft--; timeUsed++;
                     if (timeLeft <= 10 && timeLeft > 0) {
                         lastTickAt = Date.now();
                         document.getElementById('hud').classList.add('urgent');
                         playZoneSound(timeLeft <= 5 ? 'alarm' : 'tick', 0);
-                        if (timeLeft <= 5) speakText(String(timeLeft), true);
+                        // 🔇 v1.7 最後 5 秒只用滴答聲，不念數字
                     }
                     updateHUD();
                     if (timeLeft <= 0) finishWithBanner('⏰ 時間到！', 'timeup', endGame);
@@ -3508,6 +3669,11 @@
 
         // 🔁 v1.1 換題排程：同一時間只會排一次，遊戲結束後不再換題
         let pendingTaskSwitch = false;
+        let practiceHitsPerTask = 5, practiceDoneTasks = 0, completedAllPractice = false;
+        function finishPracticeNow() {
+            if (!isPracticeMode() || endBanner || isIntroRunning()) return;
+            finishWithBanner('✅ 練習結束', 'timeup', endGame);
+        }
         function scheduleNextTask(delayMs) {
             if (pendingTaskSwitch) return;
             pendingTaskSwitch = true;
@@ -3520,7 +3686,18 @@
         }
 
         // 🎯 計算全場應維持的正確答案氣球數量（全場 8 顆氣球中只維持 2 ~ 4 顆正解，其餘為錯誤陷阱）
-        function decideShouldBeCorrect(excludeBalloon) {
+        function decideShouldBeCorrect(excludeBalloon, teamIndex) {
+            // 👥 多人：以「每人防區」為單位，至少 1 顆正解（3 顆時最多 2 顆）
+            if ((activeTeams.length || 1) > 1) {
+                const tIdx = excludeBalloon ? excludeBalloon.teamIndex : teamIndex;
+                if (tIdx !== undefined && tIdx !== null) {
+                    const zc = balloons.filter(item => item !== excludeBalloon && item.state === 'floating' && item.teamIndex === tIdx && item.isCorrect).length;
+                    const maxZ = getBalloonsPerTeam() >= 3 ? 2 : 1;
+                    if (zc < 1) return true;
+                    if (zc >= maxZ) return false;
+                    return Math.random() < 0.3;
+                }
+            }
             const floatingOthers = balloons.filter(item => item !== excludeBalloon && item.state === 'floating');
             const currentCorrectCount = floatingOthers.filter(item => item.isCorrect && !item.isBomb).length;
             const minCorrect = 2;
@@ -3555,11 +3732,18 @@
             const floatingList = balloons.filter(b => b.state === 'floating');
             floatingList.forEach(b => { b.rawToken = ''; b.isCorrect = false; b.isBomb = false; });
 
-            const shuffledIndices = floatingList.map((_, i) => i).sort(() => Math.random() - 0.5);
-            const targetCorrectNum = Math.min(floatingList.length, Math.floor(Math.random() * 2) + 2); // 2 或 3 顆正解
-            shuffledIndices.slice(0, targetCorrectNum).forEach(idx => {
-                floatingList[idx].isCorrect = true;
-            });
+            if ((activeTeams.length || 1) > 1) {
+                // 👥 每人防區各挑 1 顆（3 顆時偶爾 2 顆）當正解
+                activeTeams.forEach((t, tIdx) => {
+                    const zoneList = floatingList.filter(b => b.teamIndex === tIdx).sort(() => Math.random() - 0.5);
+                    const k = Math.min(zoneList.length, (getBalloonsPerTeam() >= 3 && Math.random() < 0.3) ? 2 : 1);
+                    zoneList.slice(0, k).forEach(b => { b.isCorrect = true; });
+                });
+            } else {
+                const shuffledIndices = floatingList.map((_, i) => i).sort(() => Math.random() - 0.5);
+                const targetCorrectNum = Math.min(floatingList.length, Math.floor(Math.random() * 2) + 2); // 2 或 3 顆正解
+                shuffledIndices.slice(0, targetCorrectNum).forEach(idx => { floatingList[idx].isCorrect = true; });
+            }
 
             floatingList.forEach(b => {
                 assignBalloonContent(b, b.isCorrect);
@@ -3607,19 +3791,6 @@
             const task = params.tasks[currentTaskIndex];
             if (!task) return;
 
-            // 全場最多允許同時存在 1 顆炸彈氣球，且開局前 5 秒絕不出現
-            const activeBombCount = balloons.filter(item => item !== b && item.state === 'floating' && item.isBomb).length;
-            if (!forceCorrect && safeStartGraceTimer <= 0 && timeUsed >= 5 && activeBombCount === 0 && Math.random() < 0.08) {
-                b.isBomb = true;
-                b.isCorrect = false;
-                b.rawToken = "💣 小心炸彈";
-                b.label = "💣 勿拍!";
-                b.imgUrl = null;
-                b.logName = "炸彈氣球";
-                b.palette = { fill: '#2d3436', rim: '#e74c3c', light: '#636e72' };
-                return;
-            }
-
             b.isBomb = false;
             const pool = forceCorrect ? task.correct : task.wrong;
             if (!pool || pool.length === 0) return;
@@ -3661,7 +3832,7 @@
             const slotCenterX = zoneLeft + (subSlot + 0.5) * subW;
 
             // 🎯 依全場 2~4 顆正解配額決定這顆新氣球是否為正解（不再保證每區必有正解）
-            const isCorrect = decideShouldBeCorrect(null);
+            const isCorrect = decideShouldBeCorrect(null, teamIndex);
 
             const startX = Math.max(zoneLeft + r + 8, Math.min(zoneLeft + zoneW - r - 8, slotCenterX + (Math.random() - 0.5) * (subW * 0.2)));
             const safeTopSpan = Math.min(55, Math.max(20, (bottomY - topY) * 0.2));
@@ -3787,28 +3958,25 @@
                 spawnExplosion(b.x, b.y, ['#2ecc71', '#f1c40f', '#00ffcc', team.color], 26);
                 let cheerTxt = isPkMode()
                     ? `${team.name} +${addPts}`
-                    : (selectedPlayMode === '4p_coop' ? `🤝 全隊 +${addPts} (${team.badge}助攻)` : `+${addPts}`);
+                    : (getTeamCount() > 1 ? `🤝 全隊 +${addPts}` : `+${addPts}`);
                 floatingTexts.push({ x: b.x, y: b.y - 25, text: cheerTxt, color: '#2ecc71', life: 45, maxLife: 45 });
 
-                const cheers = ["好球！", "太神啦！", "精準擊破！", "連擊加分！", "眼明手快！"];
-                if (combo >= 2) speakText(cheers[combo % cheers.length], false);
+                // 🔇 v1.7 遊戲中不念「好球、太神啦」等語音（多組同時玩會互相干擾），只用左右聲道的音效回饋
 
-                if (isPkMode()) {
-                    if (team.combo > 0 && team.combo % 5 === 0) {
-                        triggerTeamZoneBlitz(team);
+                if (isPracticeMode()) {
+                    // 🎯 熟練練習：每題拍中指定顆數才換題；全部題目完成就結束、記錄秒數
+                    if (taskHitsInRound >= practiceHitsPerTask && !pendingTaskSwitch) {
+                        practiceDoneTasks++;
+                        taskHitsInRound = 0;
+                        if (practiceDoneTasks >= params.tasks.length) {
+                            completedAllPractice = true;
+                            finishWithBanner('🎉 全部熟練完成！', 'timeup', endGame);
+                        } else {
+                            floatingTexts.push({ x: VW / 2, y: VH * 0.5, text: `✅ 這題過關！下一題（${practiceDoneTasks + 1}/${params.tasks.length}）`, color: '#16a34a', life: 70, maxLife: 70 });
+                            scheduleNextTask(650);
+                        }
                     }
-                } else {
-                    // 只有當目前沒有未使用的飛彈時，才累積集氣（避免無限囤積飛彈）
-                    const threshold = getNitroThreshold();
-                    nitroProgress = Math.min(threshold, nitroProgress + 1);
-                    if (nitroProgress >= threshold) {
-                        nitroCount++;
-                        nitroProgress = 0;
-                        floatingTexts.push({ x: VW / 2, y: VH * 0.45, text: '⚡ 集滿獲得雷神電磁脈衝！', color: '#f1c40f', life: 60, maxLife: 60 });
-                    }
-                }
-
-                if (taskHitsInRound >= 3) {
+                } else if (taskHitsInRound >= 3) {
                     taskHitsInRound = 0;
                     scheduleNextTask(480);
                 }
@@ -3833,10 +4001,6 @@
 
                 screenShake = 14;
                 warningHideTimer = 160;
-                // 🛡️ 拍錯時「集氣進度倒扣 3 格」！
-                if (!isPkMode()) {
-                    nitroProgress = Math.max(0, nitroProgress - 3);
-                }
 
                 const curTaskText = stripZhuyinAnnotation(params.tasks[currentTaskIndex].task);
                 if (!b.isBomb) wrongLogList.push(`${curTaskText}(誤踩:${b.logName})`);
@@ -3844,7 +4008,7 @@
                 spawnExplosion(b.x, b.y, ['#e74c3c', '#c0392b', '#f1c40f'], 24);
                 const penaltyMsg = isPkMode()
                     ? `-10 🧊${team.name} 冷凍3.5s！`
-                    : `-10 ⚡集氣-3 🧊冷凍3.5s！`;
+                    : `-10 🧊冷凍3.5s！`;
                 floatingTexts.push({ x: b.x, y: b.y - 25, text: penaltyMsg, color: '#ff5252', life: 65, maxLife: 65 });
 
                 document.getElementById('penalty-task-reminder').innerText = `當前任務是：【 ${curTaskText} 】`;
@@ -4049,7 +4213,8 @@
             ctx.fillStyle = 'rgba(148, 163, 184, 0.16)';
             for (let y = topY + 18; y < VH - 50; y += 28) for (let x = (y / 28) % 2 ? 14 : 0; x < VW; x += 28) { ctx.beginPath(); ctx.arc(x, y, 1.6, 0, Math.PI * 2); ctx.fill(); }
 
-            const isUrgent = timeLeft <= 10 && timeLeft > 0 && !endBanner;
+            const practiceHud = isPracticeMode();
+            const isUrgent = !practiceHud && timeLeft <= 10 && timeLeft > 0 && !endBanner;
             if (isUrgent) {
                 ctx.save(); ctx.strokeStyle = `rgba(239,68,68,${0.25 + Math.abs(Math.sin(now * 0.008)) * 0.35})`; ctx.lineWidth = 14; ctx.strokeRect(0, 0, VW, VH); ctx.restore();
             }
@@ -4071,19 +4236,21 @@
             softCard(tX, row1Y, sideBoxW, topRowH, 16, isUrgent ? '#fef2f2' : '#ffffff', { stroke: isUrgent ? '#fca5a5' : null });
             const ringR = Math.max(14, Math.min(topRowH * 0.36, sideBoxW * 0.2));
             const ringCX = tX + 12 + ringR, ringCY = row1Y + topRowH / 2;
-            const frac = Math.max(0, Math.min(1, timeLeft / Math.max(1, Number(params.time) || 90)));
-            const ringColor = frac > 0.5 ? '#22c55e' : (frac > 0.25 ? '#f59e0b' : '#ef4444');
+            const frac = practiceHud ? 1 : Math.max(0, Math.min(1, timeLeft / Math.max(1, Number(params.time) || 90)));
+            const ringColor = practiceHud ? '#8b5cf6' : (frac > 0.5 ? '#22c55e' : (frac > 0.25 ? '#f59e0b' : '#ef4444'));
+            const timeNumStr = String(practiceHud ? timeUsed : timeLeft);
             ctx.lineCap = 'round'; ctx.lineWidth = Math.max(4, ringR * 0.26);
             ctx.strokeStyle = '#e2e8f0'; ctx.beginPath(); ctx.arc(ringCX, ringCY, ringR, 0, Math.PI * 2); ctx.stroke();
             ctx.strokeStyle = ringColor; ctx.beginPath(); ctx.arc(ringCX, ringCY, ringR, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * frac); ctx.stroke();
             ctx.fillStyle = '#0f172a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            fitTextToWidth(String(timeLeft), ringR * 0.95, 9, ringR * 1.5);
-            ctx.fillText(String(timeLeft), ringCX, ringCY + 1);
+            fitTextToWidth(timeNumStr, ringR * 0.95, 9, ringR * 1.5);
+            ctx.fillText(timeNumStr, ringCX, ringCY + 1);
             const ttX = ringCX + ringR + 10, ttW = tX + sideBoxW - ttX - 8;
             if (ttW > 30) {
                 ctx.textAlign = 'left'; ctx.fillStyle = '#64748b';
-                fitTextToWidth('剩餘秒數', topRowH * 0.2, 9, ttW); ctx.fillText('剩餘秒數', ttX, ringCY - topRowH * 0.14);
-                const cheer = timeLeft <= 0 ? '時間到' : (isUrgent ? '快一點！' : '加油！');
+                const tLbl = practiceHud ? '練習秒數' : '剩餘秒數';
+                fitTextToWidth(tLbl, topRowH * 0.2, 9, ttW); ctx.fillText(tLbl, ttX, ringCY - topRowH * 0.14);
+                const cheer = practiceHud ? '慢慢來' : (timeLeft <= 0 ? '時間到' : (isUrgent ? '快一點！' : '加油！'));
                 ctx.fillStyle = ringColor; fitTextToWidth(cheer, topRowH * 0.24, 9, ttW); ctx.fillText(cheer, ttX, ringCY + topRowH * 0.17);
             }
             ctx.restore();
@@ -4114,7 +4281,9 @@
             ctx.save();
             ctx.fillStyle = '#0369a1'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
             const relayTag = isRelayMode() ? `🏁 第 ${currentRelayGroupIdx}/${relayTotal} 組 ｜ ` : '';
-            const subHeaderStr = `${relayTag}🎯 第 ${curTaskNum}/${totalTasks} 題 ｜ 氣球會翻牌換答案，看準再拍！`;
+            const subHeaderStr = practiceHud
+                ? `🎯 第 ${Math.min(params.tasks.length, practiceDoneTasks + 1)}/${params.tasks.length} 題 ｜ 這題再拍中 ${Math.max(0, practiceHitsPerTask - taskHitsInRound)} 顆正解就過關`
+                : `${relayTag}🎯 第 ${curTaskNum}/${totalTasks} 題 ｜ 氣球會翻牌換答案，看準再拍！`;
             fitTextToWidth(subHeaderStr, topRowH * 0.19, 9, cW - 16);
             ctx.fillText(subHeaderStr, cX + cW / 2, row1Y + topRowH * 0.17);
             ctx.restore();
@@ -4186,7 +4355,7 @@
             }
 
             // 最後 5 秒：遊戲區中央淡淡的大數字
-            if (timeLeft <= 5 && timeLeft > 0 && !endBanner) {
+            if (!practiceHud && timeLeft <= 5 && timeLeft > 0 && !endBanner) {
                 ctx.save();
                 const k = Math.max(0, 1 - (now - lastTickAt) / 900);
                 ctx.globalAlpha = 0.10 + 0.10 * k; ctx.fillStyle = '#ef4444'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -4365,7 +4534,7 @@
                 ctx.restore();
                 ctx.save();
                 ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                const tip = '先看清楚上面的題目，倒數完才可以拍喔！';
+                const tip = isPracticeMode() ? '不限時間，每題拍熟再換題，慢慢來！' : '先看清楚上面的題目，倒數完才可以拍喔！';
                 fitTextToWidth(tip, 26, 12, VW * 0.8);
                 ctx.lineJoin = 'round'; ctx.lineWidth = 6; ctx.strokeStyle = 'rgba(15,23,42,0.55)';
                 ctx.strokeText(tip, VW / 2, cy + R + 32); ctx.fillText(tip, VW / 2, cy + R + 32);
@@ -4451,7 +4620,7 @@
                     </div>`;
                 }).join('');
                 speakText(`PK對決結束！恭喜 ${cleanChampName} 獲得本場冠軍，總分 ${uploadScore} 分！`, true);
-            } else if (selectedPlayMode === '4p_coop') {
+            } else if (getTeamCount() > 1) {
                 headingEl.innerText = `🤝 小隊合作挑戰成功！【${currentStudent.playerName}】`;
                 scoreLabelEl.innerText = `全隊合作總分`;
                 document.getElementById('final-score').innerText = score;
@@ -4465,8 +4634,16 @@
                     </div>`;
                 }).join('');
                 speakText(`小隊合作結束！你們的總分是 ${score} 分！`, true);
+            } else if (isPracticeMode()) {
+                headingEl.innerText = completedAllPractice
+                    ? `🎉 全部 ${params.tasks.length} 題熟練完成！共花了 ${timeUsed} 秒`
+                    : `🎯 熟練練習結束（完成 ${practiceDoneTasks}/${params.tasks.length} 題，花了 ${timeUsed} 秒）`;
+                scoreLabelEl.innerText = `練習得分`;
+                document.getElementById('final-score').innerText = score;
+                teamBox.style.display = 'none';
+                speakText(completedAllPractice ? `太棒了！全部題目都熟練完成，總共花了${timeUsed}秒！` : `練習結束，完成了${practiceDoneTasks}題！`, true);
             } else {
-                headingEl.innerText = `🎉 個人特訓挑戰結束！`;
+                headingEl.innerText = `🎉 挑戰結束！`;
                 scoreLabelEl.innerText = `個人總分`;
                 document.getElementById('final-score').innerText = score;
                 teamBox.style.display = 'none';
@@ -4482,7 +4659,7 @@
             uploadScoreAndLoadBoard(uploadName, uploadScore);
         }
 
-        function restartGame() { if (isRelayMode()) beginRelaySession(); showScreen('game-screen'); startGameFlow(); }
+        function restartGame() { enterFullscreenNow(); if (isRelayMode()) beginRelaySession(); showScreen('game-screen'); startGameFlow(); }
 
         // === 語音系統 ===
         function speakText(text, forceInterrupt = true) {
@@ -5050,7 +5227,7 @@
         // =====================================================================
         let homeRoomCache = null;          // { code, params, isDefault }
         let homeLoadSeq = 0, homeLoadTimer = null;
-        const MODE_LABEL = { '1p': '👤 1人特訓', '4p_coop': '🤝 4人合作', '2p': '⚔️ 2人PK', '4p_vs': '🏆 4人PK' };
+        const MODE_LABEL = {};
 
         function onHomeCodeInput(el) {
             el.value = el.value.replace(/[^0-9]/g, '').slice(0, 5);
@@ -5098,17 +5275,25 @@
 
         function applyRoomSettingsToHome(cfg) {
             const changed = [];
-            const mode = ['1p', '4p_coop', '2p', '4p_vs'].includes(cfg.defaultMode) ? cfg.defaultMode : null;
-            if (mode && mode !== selectedPlayMode) { selectPlayMode(mode); changed.push(document.getElementById('pmode-' + mode)); }
-            const rg = Math.max(1, Math.min(12, parseInt(cfg.relayGroups) || 1));
-            if (rg !== relayTotal) { relayTotal = rg; updateRelayUI(); changed.push(document.querySelector('.relay-picker')); }
+            const mm = modeFromCfg(cfg);
+            if (mm && (mm[0] !== ruleType || (mm[0] !== 'practice' && mm[1] !== getTeamCount()))) {
+                setHomeSlider('slider-players', mm[1]); selectRuleType(mm[0]);
+                changed.push(document.getElementById('pmode-' + mm[0]), document.getElementById('slider-wrap-players'));
+            }
+            const setIf = (id, v, wrap) => { const el = document.getElementById(id); if (el && String(el.value) !== String(v)) { el.value = v; changed.push(document.getElementById(wrap) || el); } };
+            setIf('slider-groups', Math.max(1, Math.min(12, parseInt(cfg.relayGroups) || 1)), 'slider-wrap-groups');
+            setIf('slider-time', Math.max(20, Math.min(180, parseInt(cfg.time) || 90)), 'slider-wrap-time');
+            setIf('slider-speed', Math.max(1, Math.min(10, parseInt(cfg.speed) || 4)), 'slider-speed');
+            onQuickSliderChange();
             const zy = cfg.enableZhuyin === true;
             if (zy !== enableZhuyin) { enableZhuyin = zy; updateZhuyinButtonsUI(); changed.push(document.getElementById('home-zhuyin-btn')); }
             const nT = (cfg.tasks || []).length;
             quickTaskPicks = Array.isArray(cfg.taskPicks) && normalizeTaskPicks(cfg.taskPicks, nT).length < nT ? normalizeTaskPicks(cfg.taskPicks, nT) : null;
             quickTaskPicksCode = String((document.getElementById('login-code') || {}).value || '').trim();
-            if (quickTaskPicks) { const w = document.getElementById('task-pick-wrap'); if (w) { w.open = true; changed.push(w); } }
+            if (quickTaskPicks) { const w = document.getElementById('task-pick-wrap'); if (w) changed.push(w); }
             if (changed.length) {
+                const adv = document.getElementById('advanced-settings');
+                if (adv && changed.some(el => el && adv.contains(el))) changed.push(adv.querySelector('summary'));
                 changed.filter(Boolean).forEach(el => { el.classList.remove('setting-flash'); void el.offsetWidth; el.classList.add('setting-flash'); });
                 setTimeout(() => changed.filter(Boolean).forEach(el => el.classList.remove('setting-flash')), 1900);
             }
@@ -5124,7 +5309,7 @@
             if (state === 'offline') { box.innerHTML = `⚠️ 暫時連不上雲端；按「開始」時會再試一次`; return; }
             const c = homeRoomCache.params;
             const n = (c.tasks || []).length;
-            const mode = MODE_LABEL[c.defaultMode] || '依首頁選擇';
+            const mm = modeFromCfg(c); const mode = mm ? modeLabelOf(mm[0], mm[1]) : '依首頁選擇';
             const relay = (parseInt(c.relayGroups) || 1) > 1 ? `🏁 ${c.relayGroups} 組接力` : '🏁 不接力';
             box.innerHTML = `<div class="cs-line1">✅ ${homeRoomCache.isDefault ? '自學示範題庫' : `代碼 <b>${code}</b> 已載入`}：「${escapeHtml(stripZhuyinAnnotation(c.title || '自訂挑戰'))}」（${n} 題）</div>
                 <div class="cs-line2">老師預設：${mode} · ${relay} · ⏱️${c.time || 90}秒 · ${c.enableZhuyin === true ? '注音開' : '注音關'} · 📋 出${taskPicksLabel(normalizeTaskPicks(c.taskPicks, n), n)}</div>`;
@@ -5180,6 +5365,7 @@
             if (box._lastHtml !== html) { box.innerHTML = html; box._lastHtml = html; }
             lbl.innerText = taskPicksLabel(picks, tasks.length);
             wrap.classList.toggle('partial', picks.length < tasks.length);
+            onQuickSliderChange();
         }
         function toggleHomeTaskPick(i) {
             const tasks = homeTaskList(); if (!tasks) return;
@@ -5324,7 +5510,26 @@
             ansEdit = null; params.tasks.splice(i, 1); renderSettings();
         }
         function backToHome() { hideHandoverScreen(); if ('speechSynthesis' in window) window.speechSynthesis.cancel(); showScreen('home-screen'); }
-        function backToHomeFromGame() { hideHandoverScreen(); endBanner = null; clearInterval(timerId); cancelAnimationFrame(animId); if ('speechSynthesis' in window) window.speechSynthesis.cancel(); showScreen('home-screen'); }
+        // 🏠 結束遊戲：按一下變成「再按一次確定結束」，1 秒內再按一次才結束（防學生誤觸）；中途結束的這一局不記成績
+        let endGameArmTimer = null;
+        function resetEndGameBtn() {
+            clearTimeout(endGameArmTimer); endGameArmTimer = null;
+            const b = document.getElementById('end-game-btn');
+            if (b) { b.classList.remove('armed'); b.innerText = '🏠 結束遊戲，回主畫面'; }
+        }
+        function onEndGameBtn(btn) {
+            if (btn.classList.contains('armed')) {
+                resetEndGameBtn();
+                try { const po = document.getElementById('pause-overlay'); if (po) po.style.display = 'none'; isPaused = false; } catch (e) {}
+                backToHomeFromGame();
+                return;
+            }
+            btn.classList.add('armed');
+            btn.innerText = '⚠️ 再按一次確定結束';
+            clearTimeout(endGameArmTimer);
+            endGameArmTimer = setTimeout(resetEndGameBtn, 1000);
+        }
+        function backToHomeFromGame() { resetEndGameBtn(); hideHandoverScreen(); endBanner = null; clearInterval(timerId); cancelAnimationFrame(animId); if ('speechSynthesis' in window) window.speechSynthesis.cancel(); showScreen('home-screen'); }
         function escapeHtml(str) { return String(str || '').replace(/[&<>"']/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[s])); }
     </script>
 </body>
