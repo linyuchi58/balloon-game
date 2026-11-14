@@ -650,7 +650,7 @@
                     <button class="btn-warning" onclick="openHomeLeaderboard()">🏆 查看代碼排行榜</button>
                     <button class="btn-secondary" onclick="openTeacherLoginModal()" style="background: #7f8c8d; box-shadow: 0 3px 0 #576574;">⚙️ 教師管理 / 雲端出題</button>
                 </div>
-                <div class="app-version" title="v1.7：三種遊戲方式、進階設定、結束遊戲按鈕、取消炸彈與雷神 ／ v1.6：自動開始開關可觸控、組別改叫第一組／第二組 ／ v1.5：首頁與後台可勾選這次要出的題目 ／ v1.4：分組接力（兩段式換組＋站位「我站好了」）、ㄅㄆㄇ 注音、明亮教室風、首頁「最近大家在玩」公開代碼、答案小卡編輯器（正解／陷阱兩欄）、代碼內存老師預設 ／ v1.2：開場 3-2-1 倒數、時間到橫幅、連擊大字與彩帶、柔和音效">🎈 多人氣球拍拍大挑戰 v1.7</div>
+                <div class="app-version" title="v1.8：答對答錯只在自己防區回饋、移除中間說明框 ／ v1.7：三種遊戲方式、進階設定、結束遊戲按鈕、取消炸彈與雷神 ／ v1.6：自動開始開關可觸控、組別改叫第一組／第二組 ／ v1.5：首頁與後台可勾選這次要出的題目 ／ v1.4：分組接力（兩段式換組＋站位「我站好了」）、ㄅㄆㄇ 注音、明亮教室風、首頁「最近大家在玩」公開代碼、答案小卡編輯器（正解／陷阱兩欄）、代碼內存老師預設 ／ v1.2：開場 3-2-1 倒數、時間到橫幅、連擊大字與彩帶、柔和音效">🎈 多人氣球拍拍大挑戰 v1.8</div>
                 <div style="font-size: 11px; color: #555; font-weight: bold;">💡 氣球每數秒會自動翻牌換答案！拍錯陷阱會扣 10 分，並讓自己的防區冷凍 3.5 秒。</div>
             </div>
         </div>
@@ -994,7 +994,7 @@
             <div id="canvas-container">
                 <canvas id="game-canvas"></canvas>
                 <!-- 🔧 短路維修小黑板 -->
-                <div id="penalty-warning">⚠️ 哎呀！踩錯囉！<br><span id="penalty-task-reminder" style="font-size:18px; color:#2c3e50; font-weight:900; display:inline-block; margin-top:6px;">當前任務是：【 尋找質數 】</span></div>
+                <div id="penalty-warning" style="display:none !important;">⚠️ 哎呀！踩錯囉！<br><span id="penalty-task-reminder" style="font-size:18px; color:#2c3e50; font-weight:900; display:inline-block; margin-top:6px;">當前任務是：【 尋找質數 】</span></div>
                 <div id="pause-overlay" class="overlay">
                     <h2 style="font-size: 38px; margin-bottom: 20px;">⏸️ 遊戲暫停</h2>
                     <button class="btn-primary" onclick="resumeGame()">▶ 繼續遊戲</button>
@@ -2260,8 +2260,9 @@
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
         // 🖥️ v1.1 高解析度畫布（4K 大電視/Retina 文字銳利）：VW/VH 是 CSS 邏輯尺寸，實際像素 = 邏輯尺寸 × DPR
-        const APP_VERSION = 'v1.7';
+        const APP_VERSION = 'v1.8';
         const APP_CHANGELOG = [
+            ['v1.8', '答對／答錯只在該同學的防區回饋（⭕／❌ 印章、防區閃色、冰霜冷凍倒數），移除畫面中間的答錯說明框與全畫面震動'],
             ['v1.7', '照拖曳分類：三種遊戲方式、進階設定下拉、開始挑戰自動全螢幕、結束遊戲按鈕、放大畫面可捲動；取消炸彈與雷神、遊戲中不念組別語音、多人每人 3 顆氣球'],
             ['v1.6', '換組畫面「全員站好就自動開始」改成大按鈕（觸控可點）；組別叫「第一組、第二組…」'],
             ['v1.5', '首頁與後台可勾選這次要出的題目（沒勾的題目不出現）'],
@@ -3325,6 +3326,7 @@
         let isDashing = 0, dashCooldownTimer = 0;
         let currentTaskIndex = 0, taskHitsInRound = 0;
         let screenShake = 0;
+        let hitStamps = [];   // ⭕／❌ 回饋印章（只出現在該同學的防區）
         let warningHideTimer = 0;
         let safeStartGraceTimer = 0;
 
@@ -3443,7 +3445,8 @@
                     wrongs: 0,
                     combo: 0,
                     popAnim: 0,
-                    freezeTimer: 0
+                    freezeTimer: 0,
+                    zoneFlashTimer: 0, zoneFlashType: 'good', zoneShake: 0
                 });
             }
         }
@@ -3631,6 +3634,7 @@
             safeStartGraceTimer = 300;
             taskHitsInRound = 0;
             wrongLogList = [];
+            hitStamps = [];
             balloons = []; slotRespawnCooldowns = {}; lasers = []; floatingTexts = []; particles = []; lightningBolts = [];
             comboBanners = []; scoreShown = 0; endBanner = null;
             introStartAt = Date.now(); introEndAt = introStartAt + INTRO_MS; introLastPhase = -1;
@@ -3953,13 +3957,15 @@
                 taskHitsInRound++;
                 playZoneSound('hit', b.teamIndex, Math.max(0, team.combo - 1));
                 spawnConfetti(b.x, b.y, 14, [team.color, '#facc15', '#22c55e', '#38bdf8']);
-                screenShake = 6;
+                // ✅ 只在自己的防區：閃綠＋⭕ 印章（不再全畫面震動）
+                team.zoneFlashTimer = 20; team.zoneFlashType = 'good';
+                hitStamps.push({ x: b.x, y: b.y, good: true, text: `+${addPts}`, life: 42, maxLife: 42 });
 
                 spawnExplosion(b.x, b.y, ['#2ecc71', '#f1c40f', '#00ffcc', team.color], 26);
                 let cheerTxt = isPkMode()
                     ? `${team.name} +${addPts}`
                     : (getTeamCount() > 1 ? `🤝 全隊 +${addPts}` : `+${addPts}`);
-                floatingTexts.push({ x: b.x, y: b.y - 25, text: cheerTxt, color: '#2ecc71', life: 45, maxLife: 45 });
+                // （加分改由 ⭕ 印章下方顯示）
 
                 // 🔇 v1.7 遊戲中不念「好球、太神啦」等語音（多組同時玩會互相干擾），只用左右聲道的音效回饋
 
@@ -3999,22 +4005,14 @@
                 wrongCount++;
                 playZoneSound('wrong', b.teamIndex);
 
-                screenShake = 14;
-                warningHideTimer = 160;
+                // ❌ 只在自己的防區：閃紅＋左右小晃＋❌ 印章，接著冰霜冷凍倒數（不再跳出畫面中間的說明框）
+                team.zoneFlashTimer = 24; team.zoneFlashType = 'bad'; team.zoneShake = 16;
+                hitStamps.push({ x: b.x, y: b.y, good: false, text: '-10', life: 48, maxLife: 48 });
 
                 const curTaskText = stripZhuyinAnnotation(params.tasks[currentTaskIndex].task);
                 if (!b.isBomb) wrongLogList.push(`${curTaskText}(誤踩:${b.logName})`);
 
                 spawnExplosion(b.x, b.y, ['#e74c3c', '#c0392b', '#f1c40f'], 24);
-                const penaltyMsg = isPkMode()
-                    ? `-10 🧊${team.name} 冷凍3.5s！`
-                    : `-10 🧊冷凍3.5s！`;
-                floatingTexts.push({ x: b.x, y: b.y - 25, text: penaltyMsg, color: '#ff5252', life: 65, maxLife: 65 });
-
-                document.getElementById('penalty-task-reminder').innerText = `當前任務是：【 ${curTaskText} 】`;
-                const okEx = (params.tasks[currentTaskIndex].correct || []).slice(0, 3).map(t => parseOptionToken(t).logName).filter(Boolean);
-                if (okEx.length) document.getElementById('penalty-task-reminder').innerText += `\n✅ 正確的例子：${okEx.join('、')}`;
-                document.getElementById('penalty-warning').style.display = 'block';
             }
 
             checkHammerEvolution();
@@ -4038,7 +4036,10 @@
             activeTeams.forEach(t => {
                 if (t.freezeTimer > 0) t.freezeTimer--;
                 if (t.popAnim > 0) t.popAnim--;
+                if (t.zoneFlashTimer > 0) t.zoneFlashTimer--;
+                if (t.zoneShake > 0) t.zoneShake--;
             });
+            for (let i = hitStamps.length - 1; i >= 0; i--) { hitStamps[i].life--; if (hitStamps[i].life <= 0) hitStamps.splice(i, 1); }
 
             // 遞減各航道重生冷卻計時器
             Object.keys(slotRespawnCooldowns).forEach(k => {
@@ -4353,6 +4354,17 @@
             } else if (activeTeams[0] && activeTeams[0].freezeTimer > 0) {
                 ctx.fillStyle = 'rgba(56,189,248,0.18)'; ctx.fillRect(0, topY + 3, VW, VH - topY);
             }
+            // 🟩🟥 答對／答錯：只有那位同學的防區閃一下
+            {
+                const zW = VW / Math.max(1, activeTeams.length);
+                activeTeams.forEach((t, idx) => {
+                    if (t.zoneFlashTimer > 0) {
+                        const a = (t.zoneFlashTimer / 24) * 0.3;
+                        ctx.fillStyle = t.zoneFlashType === 'good' ? `rgba(34,197,94,${a})` : `rgba(239,68,68,${a})`;
+                        ctx.fillRect(idx * zW, topY + 3, zW, VH - topY);
+                    }
+                });
+            }
 
             // 最後 5 秒：遊戲區中央淡淡的大數字
             if (!practiceHud && timeLeft <= 5 && timeLeft > 0 && !endBanner) {
@@ -4373,12 +4385,15 @@
             // 🎈 氣球（中央白色標籤，深色字＋注音，遠看也清楚）
             balloons.forEach(b => {
                 ctx.save();
+                const zt = activeTeams[b.teamIndex];
+                if (zt && zt.zoneShake > 0) ctx.translate(Math.sin(now * 0.09) * zt.zoneShake * 0.7, 0);
+                if (b.state === 'floating' && zt && zt.freezeTimer > 0) ctx.globalAlpha = 0.45;
                 if (b.state !== 'floating') {
                     const scale = 1 + (1 - b.popTimer / 25) * 0.35;
                     ctx.translate(b.x, b.y); ctx.scale(scale, scale); ctx.translate(-b.x, -b.y);
                     ctx.globalAlpha = Math.max(0, b.popTimer / 25);
                 } else {
-                    if (b.spawnProtection > 0 && b.flipAnimTimer <= 0) ctx.globalAlpha = 1 - Math.min(1, b.spawnProtection / 35) * 0.45;
+                    if (b.spawnProtection > 0 && b.flipAnimTimer <= 0) ctx.globalAlpha = Math.min(ctx.globalAlpha, 1 - Math.min(1, b.spawnProtection / 35) * 0.45);
                     if (b.flipAnimTimer > 0) {
                         const scaleX = Math.max(0.15, Math.abs(Math.cos((b.flipAnimTimer / 18) * Math.PI)));
                         ctx.translate(b.x, b.y); ctx.scale(scaleX, 1.06); ctx.translate(-b.x, -b.y);
@@ -4445,6 +4460,67 @@
                 ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.font = `bold ${Math.max(11, Math.floor(b.r * 0.22))}px ${UI_FONT}`;
                 ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
                 ctx.fillText(String(b.slotNumber), b.x, b.y - b.r + Math.max(10, b.r * 0.18));
+                ctx.restore();
+            });
+
+            // 🧊 冷凍中：整區蒙一層冰霜＋大大的倒數秒數
+            {
+                const zW = VW / Math.max(1, activeTeams.length);
+                activeTeams.forEach((t, idx) => {
+                    if (t.freezeTimer <= 0) return;
+                    const zx = idx * zW, zy = topY + 3, zh = VH - topY - 3;
+                    ctx.save();
+                    const fade = Math.min(1, t.freezeTimer / 20);
+                    ctx.globalAlpha = fade;
+                    const g = ctx.createLinearGradient(zx, zy, zx, zy + zh);
+                    g.addColorStop(0, 'rgba(224,242,254,0.55)'); g.addColorStop(1, 'rgba(186,230,253,0.35)');
+                    ctx.fillStyle = g; ctx.fillRect(zx, zy, zW, zh);
+                    // 冰晶花紋
+                    ctx.strokeStyle = 'rgba(255,255,255,0.75)'; ctx.lineWidth = 2;
+                    for (let k = 0; k < 6; k++) {
+                        const fx = zx + zW * ((k * 0.37 + 0.13) % 1), fy = zy + zh * ((k * 0.53 + 0.2) % 0.9), fr = 10 + (k % 3) * 5;
+                        ctx.beginPath();
+                        for (let a = 0; a < 3; a++) { const an = a * Math.PI / 3; ctx.moveTo(fx - Math.cos(an) * fr, fy - Math.sin(an) * fr); ctx.lineTo(fx + Math.cos(an) * fr, fy + Math.sin(an) * fr); }
+                        ctx.stroke();
+                    }
+                    const sec = Math.ceil(t.freezeTimer / 60);
+                    const big = Math.max(40, Math.min(zW * 0.32, zh * 0.3));
+                    const cx = zx + zW / 2, cy = zy + zh * 0.45;
+                    const pulse = 1 + 0.06 * Math.sin(now * 0.012);
+                    ctx.translate(cx, cy); ctx.scale(pulse, pulse);
+                    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+                    ctx.beginPath(); ctx.roundRect(-big * 1.05, -big * 0.62, big * 2.1, big * 1.24, big * 0.3); ctx.fill();
+                    ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 4; ctx.stroke();
+                    ctx.fillStyle = '#0369a1'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                    setFont(big * 0.78);
+                    ctx.fillText(`🧊 ${sec}`, 0, 2);
+                    ctx.restore();
+                });
+            }
+
+            // ⭕／❌ 回饋印章（照拖曳分類）
+            hitStamps.forEach(st => {
+                const k = 1 - st.life / st.maxLife;
+                ctx.save();
+                ctx.globalAlpha = Math.min(1, (st.life / st.maxLife) * 1.5);
+                const sc = (k < 0.2 ? 0.5 + k / 0.2 * 0.7 : 1.2 - Math.min(0.2, (k - 0.2) * 0.5));
+                const rr = Math.max(26, Math.min(44, VW * 0.028));
+                ctx.translate(st.x, st.y - k * 30); ctx.scale(sc, sc);
+                ctx.shadowColor = 'rgba(15,23,42,0.25)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 4;
+                ctx.fillStyle = st.good ? '#22c55e' : '#ef4444';
+                ctx.beginPath(); ctx.arc(0, 0, rr, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+                ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 4; ctx.stroke();
+                ctx.lineWidth = rr * 0.24; ctx.lineCap = 'round';
+                ctx.beginPath();
+                if (st.good) ctx.arc(0, 0, rr * 0.45, 0, Math.PI * 2);
+                else { const q = rr * 0.38; ctx.moveTo(-q, -q); ctx.lineTo(q, q); ctx.moveTo(q, -q); ctx.lineTo(-q, q); }
+                ctx.stroke();
+                setFont(rr * 0.9); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.lineJoin = 'round'; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 7;
+                ctx.strokeText(st.text, 0, rr + rr * 0.7);
+                ctx.fillStyle = st.good ? '#15803d' : '#b91c1c';
+                ctx.fillText(st.text, 0, rr + rr * 0.7);
                 ctx.restore();
             });
 
