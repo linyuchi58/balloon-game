@@ -636,6 +636,10 @@
                             <div class="slider-label-row"><span>🚀 氣球移動速度</span><span id="lbl-quick-speed" class="slider-val-badge">速度 4</span></div>
                             <input type="range" id="slider-speed" min="1" max="10" step="1" value="4" oninput="onQuickSliderChange()">
                         </div>
+                        <div id="slider-wrap-hits" class="slider-item">
+                            <div class="slider-label-row"><span>🔁 每題拍中幾顆換題（全場合計）</span><span id="lbl-quick-hits" class="slider-val-badge">4 顆</span></div>
+                            <input type="range" id="slider-hits" min="3" max="20" step="1" value="4" oninput="onQuickSliderChange()">
+                        </div>
                         <div id="task-pick-wrap" class="slider-item full-row task-pick-inline">
                             <div class="slider-label-row">
                                 <span>📋 這次要出的題目（至少勾 1 題；沒勾的這場不出現）</span>
@@ -650,7 +654,7 @@
                     <button class="btn-warning" onclick="openHomeLeaderboard()">🏆 查看代碼排行榜</button>
                     <button class="btn-secondary" onclick="openTeacherLoginModal()" style="background: #7f8c8d; box-shadow: 0 3px 0 #576574;">⚙️ 教師管理 / 雲端出題</button>
                 </div>
-                <div class="app-version" title="v1.9：後台可設定每題拍中幾顆換題 ／ v1.8：答對答錯只在自己防區回饋、移除中間說明框 ／ v1.7：三種遊戲方式、進階設定、結束遊戲按鈕、取消炸彈與雷神 ／ v1.6：自動開始開關可觸控、組別改叫第一組／第二組 ／ v1.5：首頁與後台可勾選這次要出的題目 ／ v1.4：分組接力（兩段式換組＋站位「我站好了」）、ㄅㄆㄇ 注音、明亮教室風、首頁「最近大家在玩」公開代碼、答案小卡編輯器（正解／陷阱兩欄）、代碼內存老師預設 ／ v1.2：開場 3-2-1 倒數、時間到橫幅、連擊大字與彩帶、柔和音效">🎈 多人氣球拍拍大挑戰 v1.9</div>
+                <div class="app-version" title="v1.10：換題顆數預設 4 顆、首頁可調 ／ v1.9：後台可設定每題拍中幾顆換題 ／ v1.8：答對答錯只在自己防區回饋、移除中間說明框 ／ v1.7：三種遊戲方式、進階設定、結束遊戲按鈕、取消炸彈與雷神 ／ v1.6：自動開始開關可觸控、組別改叫第一組／第二組 ／ v1.5：首頁與後台可勾選這次要出的題目 ／ v1.4：分組接力（兩段式換組＋站位「我站好了」）、ㄅㄆㄇ 注音、明亮教室風、首頁「最近大家在玩」公開代碼、答案小卡編輯器（正解／陷阱兩欄）、代碼內存老師預設 ／ v1.2：開場 3-2-1 倒數、時間到橫幅、連擊大字與彩帶、柔和音效">🎈 多人氣球拍拍大挑戰 v1.10</div>
                 <div style="font-size: 11px; color: #555; font-weight: bold;">💡 氣球每數秒會自動翻牌換答案！拍錯陷阱會扣 10 分，並讓自己的防區冷凍 3.5 秒。</div>
             </div>
         </div>
@@ -907,7 +911,7 @@
                         </label>
                         <label title="小隊合作、PK 爭霸：全場合計拍中幾顆正解就換下一題（所有人加起來算）">🔁 每題拍中幾顆換題:
                             <select id="set-hits-per-task">
-                                <option value="3" selected>3 顆（原本設定）</option><option value="4">4 顆</option><option value="5">5 顆</option><option value="6">6 顆</option><option value="8">8 顆</option><option value="10">10 顆</option><option value="12">12 顆</option><option value="15">15 顆</option><option value="20">20 顆</option>
+                                <option value="3">3 顆</option><option value="4" selected>4 顆（預設）</option><option value="5">5 顆</option><option value="6">6 顆</option><option value="8">8 顆</option><option value="10">10 顆</option><option value="12">12 顆</option><option value="15">15 顆</option><option value="20">20 顆</option>
                             </select>
                         </label>
                         <label title="1人熟練練習：每一題要拍中幾顆正解才換下一題">🎯 熟練練習每題拍中:
@@ -1091,7 +1095,7 @@
         // 🎮 v1.7 三種遊戲方式（跟拖曳分類一樣）＋同時上台人數
         let ruleType = 'coop';          // 'coop' 小隊合作接力 ／ 'practice' 1人熟練練習 ／ 'pk' 台上PK爭霸
         let homePlayers = 4;            // 同時上台人數 1~4（PK 至少 2）
-        let quickDurationSec = 90, quickSpeed = 4;
+        let quickDurationSec = 90, quickSpeed = 4, quickHits = 4;
         function isPkMode() { return ruleType === 'pk'; }
         function isPracticeMode() { return ruleType === 'practice'; }
         function getTeamCount() {
@@ -1134,18 +1138,20 @@
             relayTotal = Math.max(1, Math.min(12, parseInt(g('slider-groups').value) || 1));
             quickDurationSec = parseInt(g('slider-time').value) || 90;
             quickSpeed = parseInt(g('slider-speed').value) || 4;
+            quickHits = parseInt(g('slider-hits').value) || 4;
             const practice = isPracticeMode();
             g('lbl-quick-players').innerText = practice ? '1 人（熟練）' : `${getTeamCount()} 人`;
             g('lbl-quick-groups').innerText = practice ? '不接力' : (relayTotal > 1 ? `${relayTotal} 組接力` : '不接力');
             g('lbl-quick-time').innerText = practice ? '♾️ 不限時' : `${quickDurationSec} 秒`;
             g('lbl-quick-speed').innerText = `速度 ${quickSpeed}`;
-            ['slider-wrap-players', 'slider-wrap-groups', 'slider-wrap-time'].forEach(id => { const el = g(id); if (el) el.classList.toggle('dimmed', practice); });
+            g('lbl-quick-hits').innerText = practice ? '依熟練設定' : `${quickHits} 顆`;
+            ['slider-wrap-players', 'slider-wrap-groups', 'slider-wrap-time', 'slider-wrap-hits'].forEach(id => { const el = g(id); if (el) el.classList.toggle('dimmed', practice); });
             const tasks = typeof homeTaskList === 'function' ? homeTaskList() : null;
             const pickTxt = tasks && tasks.length ? taskPicksLabel(normalizeTaskPicks(quickTaskPicks, tasks.length), tasks.length) : '全部題目';
             const zyTxt = enableZhuyin ? '注音開' : '注音關';
             g('quick-summary-tag').innerText = practice
                 ? `🎯 1人熟練 · 速度${quickSpeed} · 📋${pickTxt} · ${zyTxt}`
-                : `👥${getTeamCount()}人 × 🏁${relayTotal > 1 ? relayTotal + '組' : '不接力'} · ⏱️${quickDurationSec}秒 · 速度${quickSpeed} · 📋${pickTxt} · ${zyTxt}`;
+                : `👥${getTeamCount()}人 × 🏁${relayTotal > 1 ? relayTotal + '組' : '不接力'} · ⏱️${quickDurationSec}秒 · 速度${quickSpeed} · 🔁${quickHits}顆換題 · 📋${pickTxt} · ${zyTxt}`;
             syncLegacyPlayMode();
             updateHomeNameFields();
         }
@@ -1295,7 +1301,7 @@
                     document.getElementById('pk-name-3').value.trim()
                 ],
                 playMode: selectedPlayMode,
-                ruleType: ruleType, homePlayers: homePlayers, quickDurationSec: quickDurationSec, quickSpeed: quickSpeed,
+                ruleType: ruleType, homePlayers: homePlayers, quickDurationSec: quickDurationSec, quickSpeed: quickSpeed, quickHits: quickHits,
                 relayTotal: relayTotal,
                 quickTaskPicks: quickTaskPicks, quickTaskPicksCode: quickTaskPicksCode,
                 enableZhuyin: enableZhuyin,
@@ -1368,7 +1374,7 @@
                 }
                 const TS = window.__TRANSFERRED_STATE__;
                 if (TS.ruleType) {
-                    setHomeSlider('slider-players', TS.homePlayers || 4); setHomeSlider('slider-time', TS.quickDurationSec || 90); setHomeSlider('slider-speed', TS.quickSpeed || 4);
+                    setHomeSlider('slider-players', TS.homePlayers || 4); setHomeSlider('slider-time', TS.quickDurationSec || 90); setHomeSlider('slider-speed', TS.quickSpeed || 4); setHomeSlider('slider-hits', TS.quickHits || 4);
                     setHomeSlider('slider-groups', TS.relayTotal || 1); selectRuleType(TS.ruleType);
                 } else if (TS.playMode) selectPlayMode(TS.playMode);
                 if (window.__TRANSFERRED_STATE__.relayTotal) { relayTotal = Math.max(1, Math.min(12, parseInt(window.__TRANSFERRED_STATE__.relayTotal) || 1)); setHomeSlider('slider-groups', relayTotal); }
@@ -1483,6 +1489,7 @@
         function applyHomeOverridesToParams() {   // 首頁進階設定只影響這一場
             params.time = quickDurationSec;
             params.speed = quickSpeed;
+            params.hitsPerTask = quickHits;
         }
         async function startCloudGame() {
             enterFullscreenNow();
@@ -1957,7 +1964,7 @@
             { const mm = modeFromCfg(params);
               document.getElementById('set-default-mode').value = mm ? mm[0] : '';
               document.getElementById('set-player-count').value = String(mm ? mm[1] : 4);
-              document.getElementById('set-hits-per-task').value = String([3, 4, 5, 6, 8, 10, 12, 15, 20].includes(parseInt(params.hitsPerTask)) ? parseInt(params.hitsPerTask) : 3);
+              document.getElementById('set-hits-per-task').value = String([3, 4, 5, 6, 8, 10, 12, 15, 20].includes(parseInt(params.hitsPerTask)) ? parseInt(params.hitsPerTask) : 4);
               document.getElementById('set-practice-hits').value = String([3, 4, 5, 6, 8, 10].includes(parseInt(params.practiceHits)) ? parseInt(params.practiceHits) : 5); }
             document.getElementById('set-relay-groups').value = String(Math.max(1, Math.min(12, parseInt(params.relayGroups) || 1)));
             document.getElementById('set-zhuyin').checked = params.enableZhuyin === true;
@@ -2223,7 +2230,7 @@
             params.playerCount = parseInt(document.getElementById('set-player-count').value) || 4;
             if (params.defaultMode === 'pk') params.playerCount = Math.max(2, params.playerCount);
             params.practiceHits = parseInt(document.getElementById('set-practice-hits').value) || 5;
-            params.hitsPerTask = parseInt(document.getElementById('set-hits-per-task').value) || 3;
+            params.hitsPerTask = parseInt(document.getElementById('set-hits-per-task').value) || 4;
             params.relayGroups = parseInt(document.getElementById('set-relay-groups').value) || 1;
             params.enableZhuyin = document.getElementById('set-zhuyin').checked;
             params.listOnHome = document.getElementById('set-list-home').checked;
@@ -2267,8 +2274,9 @@
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
         // 🖥️ v1.1 高解析度畫布（4K 大電視/Retina 文字銳利）：VW/VH 是 CSS 邏輯尺寸，實際像素 = 邏輯尺寸 × DPR
-        const APP_VERSION = 'v1.9';
+        const APP_VERSION = 'v1.10';
         const APP_CHANGELOG = [
+            ['v1.10', '「每題拍中幾顆換題」預設改 4 顆，首頁進階設定也能調'],
             ['v1.9', '後台可設定「每題拍中幾顆換題」'],
             ['v1.8', '答對／答錯只在該同學的防區回饋（⭕／❌ 印章、防區閃色、冰霜冷凍倒數），移除畫面中間的答錯說明框與全畫面震動'],
             ['v1.7', '照拖曳分類：三種遊戲方式、進階設定下拉、開始挑戰自動全螢幕、結束遊戲按鈕、放大畫面可捲動；取消炸彈與雷神、遊戲中不念組別語音、多人每人 3 顆氣球'],
@@ -3630,7 +3638,7 @@
             setupActiveTeams();
             gamePerTeam = 0; gamePerTeam = computeBalloonsPerTeam();
             practiceHitsPerTask = Math.max(1, parseInt(params.practiceHits) || 5);
-            hitsPerTask = Math.max(1, parseInt(params.hitsPerTask) || 3);
+            hitsPerTask = Math.max(1, parseInt(params.hitsPerTask) || 4);
             practiceDoneTasks = 0; completedAllPractice = false;
             isPaused = false; timeLeft = params.time; timeUsed = 0; score = 0; correctCount = 0; wrongCount = 0;
             scorePopAnimTimer = 0;
@@ -3683,7 +3691,7 @@
         // 🔁 v1.1 換題排程：同一時間只會排一次，遊戲結束後不再換題
         let pendingTaskSwitch = false;
         let practiceHitsPerTask = 5, practiceDoneTasks = 0, completedAllPractice = false;
-        let hitsPerTask = 3;   // 🔁 合作／PK：全場合計拍中幾顆正解換題（後台可設定；舊代碼沒設定就是 3）
+        let hitsPerTask = 4;   // 🔁 合作／PK：全場合計拍中幾顆正解換題（後台與首頁可設定；沒設定就是 4）
         function finishPracticeNow() {
             if (!isPracticeMode() || endBanner || isIntroRunning()) return;
             finishWithBanner('✅ 練習結束', 'timeup', endGame);
@@ -5370,6 +5378,7 @@
             setIf('slider-groups', Math.max(1, Math.min(12, parseInt(cfg.relayGroups) || 1)), 'slider-wrap-groups');
             setIf('slider-time', Math.max(20, Math.min(180, parseInt(cfg.time) || 90)), 'slider-wrap-time');
             setIf('slider-speed', Math.max(1, Math.min(10, parseInt(cfg.speed) || 4)), 'slider-speed');
+            setIf('slider-hits', Math.max(3, Math.min(20, parseInt(cfg.hitsPerTask) || 4)), 'slider-wrap-hits');
             onQuickSliderChange();
             const zy = cfg.enableZhuyin === true;
             if (zy !== enableZhuyin) { enableZhuyin = zy; updateZhuyinButtonsUI(); changed.push(document.getElementById('home-zhuyin-btn')); }
@@ -5398,7 +5407,7 @@
             const mm = modeFromCfg(c); const mode = mm ? modeLabelOf(mm[0], mm[1]) : '依首頁選擇';
             const relay = (parseInt(c.relayGroups) || 1) > 1 ? `🏁 ${c.relayGroups} 組接力` : '🏁 不接力';
             box.innerHTML = `<div class="cs-line1">✅ ${homeRoomCache.isDefault ? '自學示範題庫' : `代碼 <b>${code}</b> 已載入`}：「${escapeHtml(stripZhuyinAnnotation(c.title || '自訂挑戰'))}」（${n} 題）</div>
-                <div class="cs-line2">老師預設：${mode} · ${relay} · ⏱️${c.time || 90}秒 · ${c.enableZhuyin === true ? '注音開' : '注音關'} · 📋 出${taskPicksLabel(normalizeTaskPicks(c.taskPicks, n), n)}</div>`;
+                <div class="cs-line2">老師預設：${mode} · ${relay} · ⏱️${c.time || 90}秒 · 🔁${Math.max(3, Math.min(20, parseInt(c.hitsPerTask) || 4))}顆換題 · ${c.enableZhuyin === true ? '注音開' : '注音關'} · 📋 出${taskPicksLabel(normalizeTaskPicks(c.taskPicks, n), n)}</div>`;
         }
 
         // =====================================================================
