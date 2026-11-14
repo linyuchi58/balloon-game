@@ -322,8 +322,11 @@
         @keyframes hoGlow { 0%,100% { box-shadow: 0 6px 0 #14532d, 0 0 0 0 rgba(74,222,128,0.7); } 50% { box-shadow: 0 6px 0 #14532d, 0 0 0 14px rgba(74,222,128,0); } }
         .ho-start-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: #4ade80; transition: none; }
         .ho-start-label { position: relative; }
-        .ho-auto { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.08); border: 2px solid rgba(250,204,21,0.6); border-radius: 18px; padding: 8px 14px; color: #fde68a; font-weight: 900; font-size: clamp(13px, 1.4vw, 18px); cursor: pointer; max-width: 30%; }
-        .ho-auto input { width: 26px; height: 26px; accent-color: #facc15; flex-shrink: 0; }
+        .ho-auto { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.08); border: 3px solid rgba(250,204,21,0.6); border-radius: 18px; padding: 10px 18px; min-height: 56px; color: #fde68a; font: inherit; font-size: 18px; font-weight: 900; cursor: pointer; touch-action: manipulation; box-shadow: none; -webkit-tap-highlight-color: transparent; }
+        .ho-auto .ho-auto-box { width: 30px; height: 30px; border-radius: 9px; border: 3px solid #facc15; display: inline-flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; color: #1e293b; background: transparent; flex-shrink: 0; }
+        .ho-auto.on { background: #facc15; border-color: #facc15; color: #1e293b; }
+        .ho-auto.on .ho-auto-box { background: #fff; border-color: #fff; }
+        .ho-auto:active { transform: scale(0.97); }
         .ho-ready-count { text-align: center; font-size: clamp(16px, 1.9vw, 24px); font-weight: 900; color: #94a3b8; }
         .ho-ready-count.all { color: #4ade80; }
 
@@ -571,7 +574,7 @@
                     <button class="btn-warning" onclick="openHomeLeaderboard()">🏆 查看代碼排行榜</button>
                     <button class="btn-secondary" onclick="openTeacherLoginModal()" style="background: #7f8c8d; box-shadow: 0 3px 0 #576574;">⚙️ 教師管理 / 雲端出題</button>
                 </div>
-                <div class="app-version" title="v1.5：首頁與後台可勾選這次要出的題目 ／ v1.4：分組接力（兩段式換組＋站位「我站好了」）、ㄅㄆㄇ 注音、明亮教室風、首頁「最近大家在玩」公開代碼、答案小卡編輯器（正解／陷阱兩欄）、代碼內存老師預設 ／ v1.2：開場 3-2-1 倒數、時間到橫幅、連擊大字與彩帶、柔和音效">🎈 多人氣球拍拍大挑戰 v1.5</div>
+                <div class="app-version" title="v1.6：自動開始開關可觸控、組別改叫第一組／第二組 ／ v1.5：首頁與後台可勾選這次要出的題目 ／ v1.4：分組接力（兩段式換組＋站位「我站好了」）、ㄅㄆㄇ 注音、明亮教室風、首頁「最近大家在玩」公開代碼、答案小卡編輯器（正解／陷阱兩欄）、代碼內存老師預設 ／ v1.2：開場 3-2-1 倒數、時間到橫幅、連擊大字與彩帶、柔和音效">🎈 多人氣球拍拍大挑戰 v1.6</div>
                 <div style="font-size: 11px; color: #555; font-weight: bold;">💡 氣球每數秒會自動翻牌換數字！誤拍陷阱將倒扣 3 格集氣並冷凍該區 3.5 秒！</div>
             </div>
         </div>
@@ -2090,8 +2093,9 @@
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
         // 🖥️ v1.1 高解析度畫布（4K 大電視/Retina 文字銳利）：VW/VH 是 CSS 邏輯尺寸，實際像素 = 邏輯尺寸 × DPR
-        const APP_VERSION = 'v1.5';
+        const APP_VERSION = 'v1.6';
         const APP_CHANGELOG = [
+            ['v1.6', '換組畫面「全員站好就自動開始」改成大按鈕（觸控可點）；組別叫「第一組、第二組…」'],
             ['v1.5', '首頁與後台可勾選這次要出的題目（沒勾的題目不出現）'],
             ['v1.4', '分組接力（兩段式換組＋站位「我站好了」）、ㄅㄆㄇ 注音、明亮教室風、首頁「最近大家在玩」公開代碼、答案小卡編輯器（正解／陷阱兩欄）、代碼內存老師預設'],
             ['v1.2', '開場 3-2-1 倒數、時間到橫幅、連擊大字與彩帶、柔和音效'],
@@ -2765,10 +2769,19 @@
         let lastSessionStartArgs = null;
 
         function isRelayMode() { return relayTotal > 1; }
+        // 🔢 組別用國字：第一組、第二組…第十二組
+        function zhNum(n) {
+            n = parseInt(n) || 0;
+            const d = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+            if (n <= 0 || n >= 100) return String(n);
+            if (n < 10) return d[n];
+            const t = Math.floor(n / 10), o = n % 10;
+            return (t === 1 ? '十' : d[t] + '十') + (o ? d[o] : '');
+        }
         function relayGroupDisplayName(idx) {
             const prefix = (currentStudent && currentStudent.playerName && currentStudent.playerName !== '熱血獵人') ? currentStudent.playerName : '';
-            if (selectedPlayMode === '1p') return `第${idx}棒${prefix ? '-' + prefix : ''}`;
-            return `第${idx}組${prefix ? '-' + prefix : ''}`;
+            if (selectedPlayMode === '1p') return `第${zhNum(idx)}棒${prefix ? '-' + prefix : ''}`;
+            return `第${zhNum(idx)}組${prefix ? '-' + prefix : ''}`;
         }
         function getTierTitleByScore(sc) {
             let t = hammerTiers[0];
@@ -2823,7 +2836,7 @@
             const payload = {
                 action: "submitScore",
                 roomCode: currentStudent.roomCode,
-                seatNo: currentStudent.seatNo !== '-' ? currentStudent.seatNo : `第${rec.groupIndex}組`,
+                seatNo: currentStudent.seatNo !== '-' ? currentStudent.seatNo : `第${zhNum(rec.groupIndex)}組`,
                 playerName: rec.groupName,
                 score: rec.score,
                 correctCount: rec.correctCount,
@@ -2846,7 +2859,7 @@
             if (isPkMode()) {
                 const champ = activeTeams.slice().sort((a, b) => b.score - a.score)[0];
                 groupScore = champ.score;
-                groupName = `第${currentRelayGroupIdx}組冠軍-${champ.name.replace(/^[^\s]+\s*/, '')}`;
+                groupName = `第${zhNum(currentRelayGroupIdx)}組冠軍-${champ.name.replace(/^[^\s]+\s*/, '').replace(/^(紅|藍|綠|黃)隊選手$/, '$1隊')}`;
             }
             const rec = {
                 groupIndex: currentRelayGroupIdx, groupName, score: groupScore,
@@ -2937,7 +2950,7 @@
             el.style.display = 'flex';
             renderHandoverScorePhase();
             playZoneSound('finish', 0);
-            speakText(`第${latestRecord.groupIndex}組完成，總分${latestRecord.score}分！`, true);
+            speakText(`第${zhNum(latestRecord.groupIndex)}組完成，總分${latestRecord.score}分！`, true);
         }
 
         function handoverRankInfo(rec) {
@@ -2967,7 +2980,7 @@
                     </div>
                 </div>
                 <div class="ho-score-main">
-                    <div class="ho-score-title">🎉 第 ${rec.groupIndex} 組完成！</div>
+                    <div class="ho-score-title">🎉 第${zhNum(rec.groupIndex)}組完成！</div>
                     <div class="ho-score-name">${escapeHtml(rec.groupName)}</div>
                     <div class="ho-score-big"><span id="ho-score-num">0</span><small> 分</small></div>
                     <div class="ho-score-sub">目前第 <b>${rank}</b> 名（共 ${total} 組）　·　${escapeHtml(tier)}　·　答對 ${rec.correctCount}　拍錯 ${rec.wrongCount}</div>
@@ -3024,22 +3037,23 @@
             el.innerHTML = `
                 <div class="ho-top">
                     <div class="ho-prev">
-                        <span>🏁 第 ${rec.groupIndex} 組：<b>${rec.score} 分</b>　·　目前第 ${rank} 名（共 ${total} 組）　·　答對 ${rec.correctCount}／拍錯 ${rec.wrongCount}</span>
+                        <span>🏁 第${zhNum(rec.groupIndex)}組：<b>${rec.score} 分</b>　·　目前第 ${rank} 名（共 ${total} 組）　·　答對 ${rec.correctCount}／拍錯 ${rec.wrongCount}</span>
                         <button class="ho-pill ghost small" onclick="finishRelayEarly()">🏆 提前結束頒獎</button>
                     </div>
-                    <div class="ho-call">第 ${nextNum} 組同學，請到螢幕前面！</div>
+                    <div class="ho-call">第${zhNum(nextNum)}組同學，請到螢幕前面！</div>
                     <div class="ho-call-sub">一人站一格，站好後按自己格子裡的「✋ 我站好了」</div>
                     <div class="ho-start-row">
                         <button class="ho-start" id="ho-start"
                             onpointerdown="holdStartBegin(event)" onpointerup="holdStartCancel()" onpointerleave="holdStartCancel()" onpointercancel="holdStartCancel()"
                             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault(); if(!event.repeat) holdStartBegin(event);}" onkeyup="holdStartCancel()">
                             <span class="ho-start-fill" id="ho-start-fill"></span>
-                            <span class="ho-start-label" id="ho-start-label">👆 老師按住 1 秒：開始第 ${nextNum} 組（${nextNum}/${quickTotalGroups}）</span>
+                            <span class="ho-start-label" id="ho-start-label">👆 老師按住 1 秒：開始第${zhNum(nextNum)}組（${nextNum}/${quickTotalGroups}）</span>
                         </button>
-                        <label class="ho-auto" title="只在這一場有效；關掉網頁或回首頁就恢復">
-                            <input type="checkbox" id="ho-auto" ${handoverAutoStart ? 'checked' : ''} onchange="handoverAutoStart=this.checked; checkHandoverAllReady();">
+                        <button type="button" id="ho-auto" class="ho-auto ${handoverAutoStart ? 'on' : ''}" role="switch" aria-checked="${handoverAutoStart}"
+                            title="只在這一場有效；關掉網頁或回首頁就恢復" onclick="toggleHandoverAuto()">
+                            <span class="ho-auto-box">${handoverAutoStart ? '✓' : ''}</span>
                             <span>⚡ 本場：全員站好就自動開始</span>
-                        </label>
+                        </button>
                     </div>
                     <div class="ho-ready-count" id="ho-ready-count">已站好 0 / ${zones.length} 人</div>
                 </div>
@@ -3052,7 +3066,7 @@
                         <button class="ho-ready-btn" id="ho-ready-${i}" onclick="toggleHandoverReady(${i})">✋ 我站好了</button>
                     </div>`).join('')}
                 </div>`;
-            speakText(`請第${nextNum}組同學到螢幕前面，一人站一格，站好後按我站好了！`, true);
+            speakText(`請第${zhNum(nextNum)}組同學到螢幕前面，一人站一格，站好後按我站好了！`, true);
         }
 
         function toggleHandoverReady(i) {
@@ -3066,6 +3080,17 @@
             checkHandoverAllReady();
         }
 
+        // 觸控螢幕也能點：用按鈕當開關（原本的小勾選框在觸控大屏常點不到）
+        function toggleHandoverAuto() {
+            handoverAutoStart = !handoverAutoStart;
+            const b = document.getElementById('ho-auto');
+            if (b) {
+                b.classList.toggle('on', handoverAutoStart);
+                b.setAttribute('aria-checked', String(handoverAutoStart));
+                const box = b.querySelector('.ho-auto-box'); if (box) box.textContent = handoverAutoStart ? '✓' : '';
+            }
+            checkHandoverAllReady();
+        }
         function checkHandoverAllReady() {
             const n = handoverReady.filter(Boolean).length, total = handoverReady.length;
             const cnt = document.getElementById('ho-ready-count'); if (!cnt) return;
