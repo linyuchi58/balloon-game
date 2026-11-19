@@ -2387,7 +2387,7 @@
         // 🖥️ v1.1 高解析度畫布（4K 大電視/Retina 文字銳利）：VW/VH 是 CSS 邏輯尺寸，實際像素 = 邏輯尺寸 × DPR
         const APP_VERSION = 'v1.11';
         const APP_CHANGELOG = [
-            ['v1.12', '按「開始挑戰」先出現第一組就位畫面；「全員站好就自動開始」預設開啟，左上角多一個同樣的小開關'],
+            ['v1.12', '3-2-1 倒數完才開始出氣球；按「開始挑戰」先出現第一組就位畫面；「全員站好就自動開始」預設開啟，左上角多一個同樣的小開關'],
             ['v1.11', '🎉 熱鬧音效（街機風效果音＋背景節奏音樂，首頁與後台可開關，預設開啟）'],
             ['v1.10', '「每題拍中幾顆換題」預設改 4 顆，首頁進階設定也能調'],
             ['v1.9', '後台可設定「每題拍中幾顆換題」'],
@@ -4293,6 +4293,7 @@
 
         // === 8. 物理與狀態更新（含全場 2~4 顆正解動態配額與定時翻牌換數字） ===
         function updatePhysics() {
+            if (isIntroRunning()) return;   // v1.12：3-2-1 倒數時不出氣球，倒數完才開始
             if (screenShake > 0) screenShake--;
             if (isDashing > 0) isDashing--;
             if (safeStartGraceTimer > 0) safeStartGraceTimer--;
